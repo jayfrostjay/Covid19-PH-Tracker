@@ -224,8 +224,7 @@ class CovidTrackerState extends State<CovidTracker> {
                     ],
                   ),
                 ),
-                onTap: () {
-                },
+                onTap: () => Navigator.pop(context),
               ),
               new ListTile(
                 title: new Container(
@@ -245,9 +244,7 @@ class CovidTrackerState extends State<CovidTracker> {
                     ],
                   ),
                 ),
-                onTap: () {
-
-                },
+                onTap: () => Navigator.of(context).pushNamed("/about"),
               ),
               new Divider(),
               new ListTile(
@@ -268,12 +265,7 @@ class CovidTrackerState extends State<CovidTracker> {
                     ],
                   ),
                 ),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
+                onTap: () => Navigator.pop(context),
               ),
             ],
           )
