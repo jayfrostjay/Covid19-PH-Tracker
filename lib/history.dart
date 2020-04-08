@@ -91,7 +91,7 @@ class CovidHistoryState extends State<CovidHistory> {
   }
 
   @protected
-  WidgetBuildLoadMore(BuildContext context, int index){
+  Widget BuildLoadMore(BuildContext context, int index){
     if( _showLoaderList ){
       var totalMinusLoaded = (_data.length) - _dataLoaded;
       if( totalMinusLoaded >= _dataAppendCount ){
@@ -134,7 +134,7 @@ class CovidHistoryState extends State<CovidHistory> {
   }
 
   @protected
-  WidgetBuildHistoryItem(BuildContext context, int index) {
+  Widget BuildHistoryItem(BuildContext context, int index) {
     return 
       Padding(
         padding: const EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 2.0),
@@ -227,7 +227,7 @@ class CovidHistoryState extends State<CovidHistory> {
   }
 
   @protected
-  WidgetBuildHistoryList(BuildContext context){
+  Widget BuildHistoryList(BuildContext context){
     if( !(_hasHistory) ){
       return Center(
         child: Text(
@@ -242,14 +242,14 @@ class CovidHistoryState extends State<CovidHistory> {
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: _dataLoaded,
         itemBuilder: (BuildContext context, int index) {
-          return (index == (_dataLoaded-1) && !(index == (_data.length - 1)) ) ? WidgetBuildLoadMore(context, index) : WidgetBuildHistoryItem(context, index);
+          return (index == (_dataLoaded-1) && !(index == (_data.length - 1)) ) ? BuildLoadMore(context, index) : BuildHistoryItem(context, index);
         }
       ),
     );
   }
 
   @protected
-  WidgetBuildLoader(BuildContext context){
+  Widget BuildLoader(BuildContext context){
     return new Container(
       alignment: Alignment.center,
       child: AwesomeLoader(
@@ -268,8 +268,8 @@ class CovidHistoryState extends State<CovidHistory> {
       ),
       body: new Container(
         child: (_showLoader) ? 
-                WidgetBuildLoader(context) : 
-                WidgetBuildHistoryList(context)
+                BuildLoader(context) : 
+                BuildHistoryList(context)
       )
     );
   }
