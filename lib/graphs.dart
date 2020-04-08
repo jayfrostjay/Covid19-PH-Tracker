@@ -31,7 +31,6 @@ class CovidStatisticsState extends State<CovidStatistics> {
   List<dynamic> _data = [];
   int _dataAppendCount = 20;
 
-  GlobalKey<AnimatedListState> _animatedListKey = GlobalKey<AnimatedListState>();
 
   @override
   void initState(){
@@ -80,7 +79,6 @@ class CovidStatisticsState extends State<CovidStatistics> {
             }else{
               _hasData = true;
             }
-            _animatedListKey.currentState.insertItem(0);
           });
         }
     }else{
@@ -282,28 +280,15 @@ class CovidStatisticsState extends State<CovidStatistics> {
       );
     }
 
-    // return new Container(
-    //   child: new ListView.builder(
-    //     physics: const AlwaysScrollableScrollPhysics(),
-    //     itemCount: _listItemCount,
-    //     itemBuilder: (BuildContext context, int index) {
-    //       return (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index);
-    //     }
-    //   ),
-    // );
-
     return new Container(
-      child: AnimatedList(
+      child: new ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        initialItemCount: _listItemCount,
-        key: _animatedListKey,
-        itemBuilder: (BuildContext context, int index, Animation animation){
-          return SizeTransition(
-            sizeFactor: animation,
-            child: (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index),
-          );
-        })
-      );
+        itemCount: _listItemCount,
+        itemBuilder: (BuildContext context, int index) {
+          return (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index);
+        }
+      ),
+    );
   }
 
   @override
