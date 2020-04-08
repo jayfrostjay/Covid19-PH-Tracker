@@ -4,14 +4,21 @@ import './tracker.dart';
 import './about.dart';
 import './graphs.dart';
 import './history.dart';
+import 'package:flutter_config/flutter_config.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await FlutterConfig.loadEnvVariables();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
 
-  final String APIHeaderRapidKey = "4db84251f5mshe080beb892a0295p11d59djsn4898d6237f6b";
-  final String APIHeaderRapidHost = "coronavirus-monitor.p.rapidapi.com";
-  final String LocationKeyPH = "Philippines";
+  final String APIHeaderRapidKey = FlutterConfig.get('API_KEY');
+  final String APIHeaderRapidHost = FlutterConfig.get('API_URL');
+  final String LocationKeyPH = FlutterConfig.get('API_COUNTRY_KEY');
 
   @override
   Widget build(BuildContext context) {

@@ -33,6 +33,7 @@ dependencies:
   charts_flutter: ^0.9.0
 
 dev_dependencies:
+  flutter_config: ^1.0.7
   flutter_test:
     sdk: flutter
 
