@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -26,8 +26,14 @@ dependencies:
   http: ^0.12.0+4
   intl: ">=0.14.0"
   progress_dialog: ^1.2.1
+  url_launcher: ^5.4.2
+  font_awesome_flutter: '>= 4.7.0'
+  fluttertoast: ^4.0.0
+  awesome_loader: ^0.0.3
+  charts_flutter: ^0.9.0
 
 dev_dependencies:
+  flutter_config: ^1.0.7
   flutter_test:
     sdk: flutter
 
@@ -42,6 +48,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+      - assets/images/test.jpg
+
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:
