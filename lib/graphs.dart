@@ -88,7 +88,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
   }
 
   @protected
-  WidgetBuildPageLoader(BuildContext context){
+  Widget BuildPageLoader(BuildContext context){
     return new Container(
       alignment: Alignment.center,
       child: AwesomeLoader(
@@ -99,7 +99,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
   }
 
   @protected
-  WidgetBuildListLoader(BuildContext context, int index){
+  Widget BuildListLoader(BuildContext context, int index){
     if( _listLoader ){
       var totalMinusLoaded = (_data.length) - _listItemCount;
       if( totalMinusLoaded >= _dataAppendCount ){
@@ -142,9 +142,8 @@ class CovidStatisticsState extends State<CovidStatistics> {
   }
 
   @protected
-  WidgetBuildListItem(BuildContext context, int index) {
+  Widget BuildListItem(BuildContext context, int index) {
     if( _data[index]['viewType'] == viewType.header ){
-      
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
@@ -267,7 +266,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
   }
 
   @protected
-  WidgetBuildHistoryList(BuildContext context){
+  Widget BuildHistoryList(BuildContext context){
     if( !(_hasData) ){
       return Center(
         child: Text(
@@ -276,13 +275,13 @@ class CovidStatisticsState extends State<CovidStatistics> {
         ),
       );
     }
-    
+
     return new Container(
       child: new ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: _listItemCount,
         itemBuilder: (BuildContext context, int index) {
-          return (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? WidgetBuildListLoader(context, index) : WidgetBuildListItem(context, index);
+          return (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index);
         }
       ),
     );
@@ -296,7 +295,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
         title: new Text("World Statistics")
       ),
       body: Container(
-        child: (_pageLoader) ? WidgetBuildPageLoader(context) : WidgetBuildHistoryList(context),
+        child: (_pageLoader) ? BuildPageLoader(context) : BuildHistoryList(context),
       ),
     );
   }
