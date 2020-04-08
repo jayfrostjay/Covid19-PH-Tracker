@@ -20,9 +20,13 @@ class AboutPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
               new CircleAvatar(
-                radius: 80.0,
+                radius: 100.0,
                 backgroundColor: Colors.blue,
-                child: new Text("PH", style: TextStyle(fontSize: 50.0, color: Colors.white),)
+                // child: new Text("PH", style: TextStyle(fontSize: 50.0, color: Colors.white),)
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100.0),
+                  child: Image.asset('assets/images/test.jpg'),
+                )
               ),
               new Padding(
                 padding: EdgeInsets.fromLTRB(0, 20.0, 0, 0),

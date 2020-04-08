@@ -270,13 +270,13 @@ class CovidTrackerState extends State<CovidTracker> {
         children: <Widget>[
           new UserAccountsDrawerHeader(
             accountName: new Text("Covid-19 PH Tracker"), 
-            accountEmail: new Text("jayfrostgarcia@gmail.com"),
+            accountEmail: new Text("garciajyh@gmail.com"),
             currentAccountPicture: new CircleAvatar(
-              child: Text("PH")
-              // child: ClipRRect(
-              //   borderRadius: BorderRadius.circular(50.0),
-              //   child: Image.asset('assets/images/test.jpg'),
-              // )
+              // child: Text("PH")
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50.0),
+                child: Image.asset('assets/images/test.jpg'),
+              )
             ),
           ),
           new ListTile(
@@ -312,7 +312,7 @@ class CovidTrackerState extends State<CovidTracker> {
                   new Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                    child: new Text('History'),
+                    child: new Text('PH History'),
                   )
                 ],
               ),

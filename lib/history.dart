@@ -1,9 +1,13 @@
+import 'dart:ffi';
+
 import 'package:awesome_loader/awesome_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert' show json;
 import 'package:intl/intl.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class CovidHistory extends StatefulWidget{
   final String apiKey, apiHost, locationKey;
@@ -23,9 +27,9 @@ class CovidHistoryState extends State<CovidHistory> {
   CovidHistoryState(this.apiKey, this.apiHost, this.locationKey);
 
   var _dataAppendCount = 10;
-  var _showLoader = true, _dataLoaded = 10, _showLoaderList = false; //default number of list
-  List<dynamic> _data;
-  bool _hasHistory = true;
+  var _showLoader = true, _dataLoaded = 10, _showLoaderList = false, _graphShowCount = 3; //default number of list
+  List<dynamic> _data = [];
+  bool _hasHistory = true, _showGraphConfirmed = true, _showGraphRecovered = true, _showGraphDeaths = true;
 
   @override
   void initState(){
@@ -59,23 +63,19 @@ class CovidHistoryState extends State<CovidHistory> {
           }
         });
 
-        if( this.mounted ){
-          setState(() {
-            _showLoader = false;
-            _data = tempData;
-            if( _data.length == 0 ){
-              _hasHistory = false;
-            }else{
-              _hasHistory = true;
-            }
-          });
-        }
-    }else{
-      if( this.mounted ){
-        setState(() {
-          _hasHistory = false;
+        setStateWrapper((){
+          _showLoader = false;
+          _data = tempData;
+          if( _data.length == 0 ){
+            _hasHistory = false;
+          }else{
+            _hasHistory = true;
+          }
         });
-      }
+    }else{
+      setStateWrapper((){
+        _hasHistory = false;
+      });
       throw Exception('Failed to load data....');
     }
   }
@@ -105,12 +105,10 @@ class CovidHistoryState extends State<CovidHistory> {
       }
 
       Future.delayed(const Duration(milliseconds: 500), () => {
-        ( this.mounted ) ? {
-          setState((){
-            _showLoaderList = false;
-            _dataLoaded = _dataLoaded;
-          })
-        } : { }
+        setStateWrapper((){
+          _showLoaderList = false;
+          _dataLoaded = _dataLoaded;
+        })
       });
       return Container(
         margin: EdgeInsets.fromLTRB(0, 4.0, 0, 0),
@@ -130,11 +128,9 @@ class CovidHistoryState extends State<CovidHistory> {
         child: FlatButton(
             child: Text("Load More...", style: TextStyle(color: Colors.white),),
             onPressed: () {
-              if( this.mounted ){
-                setState(() {
-                  _showLoaderList = true;
-                });
-              }
+              setStateWrapper((){
+                _showLoaderList = true;
+              });
             },
         ),
       ); 
@@ -269,16 +265,215 @@ class CovidHistoryState extends State<CovidHistory> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: new AppBar(
-        title: new Text("PH Covid History"),
+    determinePageOrientation();
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: new Text("PH Covid History"),
+          bottom: TabBar(
+            tabs: [
+              Tab(icon: FaIcon(FontAwesomeIcons.list)),
+              Tab(icon: FaIcon(FontAwesomeIcons.chartBar)),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            (_showLoader) ? BuildLoader(context) : BuildHistoryList(context),
+            BuildCharts(context)
+          ],
+        ),
       ),
-      body: new Container(
-        child: (_showLoader) ? 
-                BuildLoader(context) : 
-                BuildHistoryList(context)
-      )
     );
   }
+
+  @protected
+  Widget BuildCharts(BuildContext context){
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            Text(
+              'PH Statistics for Covid-19 PH',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0
+              ),
+            ),
+            Expanded(
+              child: charts.BarChart(
+                _createItems(),
+                animate: true,
+                barGroupingType: charts.BarGroupingType.grouped,
+                animationDuration: Duration(milliseconds: 500),
+              )
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                      Checkbox(
+                      value: _showGraphConfirmed,
+                      checkColor: Colors.grey.shade900,
+                      activeColor: Colors.yellow,
+                      onChanged: (value) => {
+                        setStateWrapper((){
+                          _showGraphConfirmed = value;
+                        })
+                      }
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 0, 0, 0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setStateWrapper((){
+                            _showGraphConfirmed = !(_showGraphConfirmed);
+                          });
+                        },
+                        child: Text('Confirmed',style: TextStyle( fontWeight: FontWeight.bold)),
+                      )
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Checkbox(
+                      value: _showGraphRecovered,
+                      checkColor: Colors.grey.shade900,
+                      activeColor: Colors.green,
+                      onChanged: (value) => {
+                        setStateWrapper((){
+                          _showGraphRecovered = value;
+                        })
+                      }
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 0, 0, 0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setStateWrapper((){
+                            _showGraphRecovered = !(_showGraphRecovered);
+                          });
+                        },
+                        child: Text('Recovered',style: TextStyle( fontWeight: FontWeight.bold)),
+                      )
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Checkbox(
+                      value: _showGraphDeaths,
+                      checkColor: Colors.grey.shade900,
+                      activeColor: Colors.red,
+                      onChanged: (value) => {
+                        setStateWrapper((){
+                          _showGraphDeaths = value;
+                        })
+                      }
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 0, 0, 0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setStateWrapper((){
+                            _showGraphDeaths = !(_showGraphDeaths);
+                          });
+                        },
+                        child: Text('Deaths',style: TextStyle( fontWeight: FontWeight.bold)),
+                      )
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<charts.Series<HistoryItem, String>> _createItems(){
+    List<HistoryItem> recoveredData = [], deathsData  = [], confirmedData  = [];
+    (_data).asMap().forEach((index, value) => {
+      (index < (_graphShowCount)) ? {
+        confirmedData.add(
+          new HistoryItem(DateFormat("MMM dd, yyyy").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_cases']).replaceAll(',', '') ))
+        ),
+        recoveredData.add(
+          new HistoryItem(DateFormat("MMM dd, yyyy").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_recovered']).replaceAll(',', '') ))
+        ),
+        deathsData.add(
+          new HistoryItem(DateFormat("MMM dd, yyyy").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_deaths']).replaceAll(',', '') ))
+        )
+      } : {}
+    });   
+
+    List<charts.Series<HistoryItem, String>> returnData = [];
+
+    if( _showGraphConfirmed ){
+      returnData.add(new charts.Series<HistoryItem, String>(
+        id: 'Confirmed',
+        colorFn: (_, __) => charts.MaterialPalette.yellow.shadeDefault,
+        domainFn: (HistoryItem item, _) => item.historyDate,
+        measureFn: (HistoryItem item, _) => item.count,
+        data: confirmedData.reversed.toList(),
+      ));
+    }
+
+    if( _showGraphRecovered ){
+      returnData.add(new charts.Series<HistoryItem, String>(
+        id: 'Recovered',
+        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+        domainFn: (HistoryItem item, _) => item.historyDate,
+        measureFn: (HistoryItem item, _) => item.count,
+        data: recoveredData.reversed.toList(),
+      ));
+    }
+
+    if( _showGraphDeaths ){
+      returnData.add(new charts.Series<HistoryItem, String>(
+        id: 'Deaths',
+        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+        domainFn: (HistoryItem item, _) => item.historyDate,
+        measureFn: (HistoryItem item, _) => item.count,
+        data: deathsData.reversed.toList(),
+      ));
+    }  
+ 
+    return returnData;
+  }
+
+  void determinePageOrientation(){
+    Orientation currentOrientation = MediaQuery.of(context).orientation;
+    if( currentOrientation == Orientation.landscape ){
+      setStateWrapper((){
+        _graphShowCount = 8;
+      });
+    }else{
+      setStateWrapper((){
+        _graphShowCount = 3;
+      });
+    }
+  }
+
+  void setStateWrapper(Function function){
+    if( this.mounted ){
+      setState(() {
+        function();
+      });
+    }
+  }
+}
+
+class HistoryItem {
+  final String historyDate;
+  final int count;
+
+  HistoryItem(this.historyDate, this.count);
 }
