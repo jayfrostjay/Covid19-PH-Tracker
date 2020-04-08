@@ -77,16 +77,18 @@ class CovidTrackerState extends State<CovidTracker> {
         record_date = record_date.substring(0, 8) + 'T' + record_date.substring(8);
         print(latestData);
         
-        setState(() {
-          confirmed = latestData["total_cases"];
-          deaths = latestData["total_deaths"];
-          recovered = latestData["total_recovered"];
-          active_cases = latestData['active_cases'];
-          showLoader = false;
+        if( this.mounted ){
+          setState(() {
+            confirmed = latestData["total_cases"];
+            deaths = latestData["total_deaths"];
+            recovered = latestData["total_recovered"];
+            active_cases = latestData['active_cases'];
+            showLoader = false;
 
-          record_date = record_date;
-          record_date_formatted = DateFormat("E MMM dd, yyyy - hh:mm:ss a").format(DateTime.parse(record_date));
-        });
+            record_date = record_date;
+            record_date_formatted = DateFormat("E MMM dd, yyyy - hh:mm:ss a").format(DateTime.parse(record_date));
+          });
+        }
     }else{
       throw Exception('Failed to load data....');
     }
@@ -174,9 +176,11 @@ class CovidTrackerState extends State<CovidTracker> {
     );
 
     if( show ){
-      setState(() {
-        defaultState();
-      });
+      if( this.mounted ){
+        setState(() {
+          defaultState();
+        });
+      }
       progressDialog.show();
     }
   }

@@ -59,19 +59,23 @@ class CovidHistoryState extends State<CovidHistory> {
           }
         });
 
-        setState(() {
-          _showLoader = false;
-          _data = tempData;
-          if( _data.length == 0 ){
-            _hasHistory = false;
-          }else{
-            _hasHistory = true;
-          }
-        });
+        if( this.mounted ){
+          setState(() {
+            _showLoader = false;
+            _data = tempData;
+            if( _data.length == 0 ){
+              _hasHistory = false;
+            }else{
+              _hasHistory = true;
+            }
+          });
+        }
     }else{
-      setState(() {
-        _hasHistory = false;
-      });
+      if( this.mounted ){
+        setState(() {
+          _hasHistory = false;
+        });
+      }
       throw Exception('Failed to load data....');
     }
   }
@@ -101,10 +105,12 @@ class CovidHistoryState extends State<CovidHistory> {
       }
 
       Future.delayed(const Duration(milliseconds: 500), () => {
-        setState((){
-          _showLoaderList = false;
-          _dataLoaded = _dataLoaded;
-        })
+        ( this.mounted ) ? {
+          setState((){
+            _showLoaderList = false;
+            _dataLoaded = _dataLoaded;
+          })
+        } : { }
       });
       return Container(
         margin: EdgeInsets.fromLTRB(0, 4.0, 0, 0),
@@ -124,9 +130,11 @@ class CovidHistoryState extends State<CovidHistory> {
         child: FlatButton(
             child: Text("Load More...", style: TextStyle(color: Colors.white),),
             onPressed: () {
-              setState(() {
-                _showLoaderList = true;
-              });
+              if( this.mounted ){
+                setState(() {
+                  _showLoaderList = true;
+                });
+              }
             },
         ),
       ); 

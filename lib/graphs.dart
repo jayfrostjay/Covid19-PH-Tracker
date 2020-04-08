@@ -31,6 +31,8 @@ class CovidStatisticsState extends State<CovidStatistics> {
   List<dynamic> _data = [];
   int _dataAppendCount = 20;
 
+  GlobalKey<AnimatedListState> _animatedListKey = GlobalKey<AnimatedListState>();
+
   @override
   void initState(){
     super.initState();
@@ -69,20 +71,24 @@ class CovidStatisticsState extends State<CovidStatistics> {
           tempData.add(value);
         });
 
-        setState(() {
-          _pageLoader = false;
-          _data = tempData;
-
-          if( _data.length == 0 ){
-            _hasData = false;
-          }else{
-            _hasData = true;
-          }
-        });
+        if( this.mounted ){
+          setState(() {
+            _pageLoader = false;
+            _data = tempData;
+            if( _data.length == 0 ){
+              _hasData = false;
+            }else{
+              _hasData = true;
+            }
+            _animatedListKey.currentState.insertItem(0);
+          });
+        }
     }else{
-      setState(() {
-        _hasData = false;
-      });
+      if( this.mounted ){
+        setState(() {
+          _hasData = false;
+        });
+      }
       throw Exception('Failed to load data....');
     }
   }
@@ -109,10 +115,12 @@ class CovidStatisticsState extends State<CovidStatistics> {
       }
 
       Future.delayed(const Duration(milliseconds: 500), () => {
-        setState((){
-          _listLoader = false;
-          _listItemCount = _listItemCount;
-        })
+        (this.mounted) ? {
+          setState((){
+            _listLoader = false;
+            _listItemCount = _listItemCount;
+          })
+        } : {}
       });
       return Container(
         margin: EdgeInsets.fromLTRB(0, 4.0, 0, 0),
@@ -132,9 +140,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
         child: FlatButton(
             child: Text("Load More...", style: TextStyle(color: Colors.white),),
             onPressed: () {
-              setState(() {
-                _listLoader = true;
-              });
+              (this.mounted) ? setState(() { _listLoader = true; }) : { };
             },
         ),
       ); 
@@ -276,15 +282,28 @@ class CovidStatisticsState extends State<CovidStatistics> {
       );
     }
 
+    // return new Container(
+    //   child: new ListView.builder(
+    //     physics: const AlwaysScrollableScrollPhysics(),
+    //     itemCount: _listItemCount,
+    //     itemBuilder: (BuildContext context, int index) {
+    //       return (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index);
+    //     }
+    //   ),
+    // );
+
     return new Container(
-      child: new ListView.builder(
+      child: AnimatedList(
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: _listItemCount,
-        itemBuilder: (BuildContext context, int index) {
-          return (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index);
-        }
-      ),
-    );
+        initialItemCount: _listItemCount,
+        key: _animatedListKey,
+        itemBuilder: (BuildContext context, int index, Animation animation){
+          return SizeTransition(
+            sizeFactor: animation,
+            child: (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index),
+          );
+        })
+      );
   }
 
   @override
