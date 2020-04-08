@@ -75,7 +75,7 @@ class CovidTrackerState extends State<CovidTracker> {
         record_date = record_date.replaceAll('-', '');
         record_date = record_date.replaceAll(':', '');
         record_date = record_date.substring(0, 8) + 'T' + record_date.substring(8);
-        print(latestData);
+        // print(latestData);
         
         if( this.mounted ){
           setState(() {
@@ -216,21 +216,14 @@ class CovidTrackerState extends State<CovidTracker> {
       );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Covid-19 PH Tracker"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: pullDataFromServer
-            )
-          ],
-          ), 
-        body: Container(
+  @protected
+  Widget BuildScrollableBody(BuildContext context){
+    return SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Container(
                 padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
@@ -264,128 +257,154 @@ class CovidTrackerState extends State<CovidTracker> {
                 ),
               ) 
             ],
-          )
-        ),
-        drawer: new Drawer(
-          child: new ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              new UserAccountsDrawerHeader(
-                accountName: new Text("Covid-19 PH Tracker"), 
-                accountEmail: new Text("jayfrostgarcia@gmail.com"),
-                currentAccountPicture: new CircleAvatar(
-                  child: new Text("PH")
-                ),
-              ),
-              new ListTile(
-                title: new Container(
-                  alignment: Alignment.centerLeft,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        child: new Icon(Icons.track_changes),
-                      ),
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                        child: new Text('Tracker'),
-                      )
-                    ],
+          ),
+      ),
+    );
+  }
+
+  @protected 
+  Widget buildDrawers(BuildContext context){
+    return new Drawer(
+      child: new ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          new UserAccountsDrawerHeader(
+            accountName: new Text("Covid-19 PH Tracker"), 
+            accountEmail: new Text("jayfrostgarcia@gmail.com"),
+            currentAccountPicture: new CircleAvatar(
+              child: Text("PH")
+              // child: ClipRRect(
+              //   borderRadius: BorderRadius.circular(50.0),
+              //   child: Image.asset('assets/images/test.jpg'),
+              // )
+            ),
+          ),
+          new ListTile(
+            title: new Container(
+              alignment: Alignment.centerLeft,
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    child: new Icon(Icons.track_changes),
                   ),
-                ),
-                onTap: () => Navigator.pop(context),
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                    child: new Text('Tracker'),
+                  )
+                ],
               ),
-              new ListTile(
-                title: new Container(
-                  alignment: Alignment.centerLeft,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        child: new FaIcon(FontAwesomeIcons.history),
-                      ),
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                        child: new Text('History'),
-                      )
-                    ],
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+          new ListTile(
+            title: new Container(
+              alignment: Alignment.centerLeft,
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    child: new FaIcon(FontAwesomeIcons.history),
                   ),
-                ),
-                onTap: () => 
-                  // Navigator.push(
-                  //                 context, 
-                  //                 MaterialPageRoute(builder: (BuildContext context) => CovidHistory(data: dataTimelines))
-                  //           )
-                  Navigator.of(context).pushNamed("/history")
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                    child: new Text('History'),
+                  )
+                ],
               ),
-              new ListTile(
-                title: new Container(
-                  alignment: Alignment.centerLeft,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        child: new FaIcon(FontAwesomeIcons.chartLine),
-                      ),
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                        child: new Text('World Statistics'),
-                      )
-                    ],
+            ),
+            onTap: () => 
+              Navigator.of(context).pushNamed("/history")
+          ),
+          new ListTile(
+            title: new Container(
+              alignment: Alignment.centerLeft,
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    child: new FaIcon(FontAwesomeIcons.chartLine),
                   ),
-                ),
-                onTap: () => Navigator.of(context).pushNamed("/statistics"),
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                    child: new Text('World Statistics'),
+                  )
+                ],
               ),
-              new ListTile(
-                title: new Container(
-                  alignment: Alignment.centerLeft,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        child: new Icon(Icons.info),
-                      ),
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                        child: new Text('About'),
-                      )
-                    ],
+            ),
+            onTap: () => Navigator.of(context).pushNamed("/statistics"),
+          ),
+          new ListTile(
+            title: new Container(
+              alignment: Alignment.centerLeft,
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    child: new Icon(Icons.info),
                   ),
-                ),
-                onTap: () => Navigator.of(context).pushNamed("/about"),
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                    child: new Text('About'),
+                  )
+                ],
               ),
-              new Divider(),
-              new ListTile(
-                title: new Container(
-                  alignment: Alignment.centerLeft,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        child: new Icon(Icons.close),
-                      ),
-                      new Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                        child: new Text('Close'),
-                      )
-                    ],
+            ),
+            onTap: () => Navigator.of(context).pushNamed("/about"),
+          ),
+          new Divider(),
+          new ListTile(
+            title: new Container(
+              alignment: Alignment.centerLeft,
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    child: new Icon(Icons.close),
                   ),
-                ),
-                onTap: () => Navigator.pop(context),
+                  new Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                    child: new Text('Close'),
+                  )
+                ],
               ),
-            ],
-          )
-        ),
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+        ],
+      )
+    );
+  }
+
+  @protected
+  Widget buildAppBar(BuildContext context){
+    return AppBar(
+      title: Text("Covid-19 PH Tracker"),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: pullDataFromServer
+        )
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: buildAppBar(context), 
+        body: BuildScrollableBody(context),
+        drawer: buildDrawers(context),
     );
   }
 }
