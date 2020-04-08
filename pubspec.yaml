@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -27,6 +27,9 @@ dependencies:
   intl: ">=0.14.0"
   progress_dialog: ^1.2.1
   url_launcher: ^5.4.2
+  font_awesome_flutter: '>= 4.7.0'
+  fluttertoast: ^4.0.0
+  awesome_loader: ^0.0.3
 
 dev_dependencies:
   flutter_test:
