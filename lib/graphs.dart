@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -5,6 +7,8 @@ import 'package:awesome_loader/awesome_loader.dart';
 import 'dart:async';
 import 'dart:convert' show json;
 import 'package:intl/intl.dart';
+import 'package:phcovid19tracker/history.dart';
+import 'package:flutter_config/flutter_config.dart';
 
 class CovidStatistics extends StatefulWidget{
   final String apiKey, apiHost, locationKey;
@@ -27,10 +31,9 @@ class CovidStatisticsState extends State<CovidStatistics> {
   CovidStatisticsState(this.apiKey, this.apiHost, this.locationKey);
 
   bool _pageLoader = true, _listLoader = false, _hasData = true;
-  int _listItemCount = 12;
+  int _listItemCount = 22;
   List<dynamic> _data = [];
   int _dataAppendCount = 20;
-
 
   @override
   void initState(){
@@ -47,7 +50,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
     return DateFormat("E MMM dd, yyyy - hh:mm:ss a").format(DateTime.parse(formattedData));
   }
 
-  _pullStatisticsData() async {
+  Future<HashMap<String, dynamic>> _fetchStatistics() async {
     final response = await http.get(
     Uri.encodeFull('https://coronavirus-monitor.p.rapidapi.com/coronavirus/cases_by_country.php'),
       headers: { 
@@ -57,37 +60,40 @@ class CovidStatisticsState extends State<CovidStatistics> {
       }
     );
 
+    HashMap<String, dynamic> _data = new HashMap<String, dynamic>();
     if( response.statusCode == 200 ){
-        var data = json.decode(response.body);
-        List<dynamic> tempData = [];
-        tempData.add({
-          'stat_date' : formatData(data['statistic_taken_at']).toString(),
-          'viewType' : viewType.header
-        });
-
-        (data['countries_stat']).forEach((value) {
-          value['viewType'] = viewType.item;
-          tempData.add(value);
-        });
-
-        if( this.mounted ){
-          setState(() {
-            _pageLoader = false;
-            _data = tempData;
-            if( _data.length == 0 ){
-              _hasData = false;
-            }else{
-              _hasData = true;
-            }
-          });
-        }
+      var data = json.decode(response.body);
+      _data["date"] = data["statistic_taken_at"];
+      _data["history"] = data["countries_stat"];
+      return _data;
     }else{
-      if( this.mounted ){
-        setState(() {
-          _hasData = false;
-        });
-      }
-      throw Exception('Failed to load data....');
+      return _data;
+    }
+  }
+
+  _pullStatisticsData() async {
+    var dataHolder = [];
+    var statisticsData = await _fetchStatistics();
+
+    if( statisticsData["history"].length > 0 ){
+      dataHolder.add({
+        'stat_date' : formatData(statisticsData['date']).toString(),
+        'viewType' : viewType.header
+      });
+      (statisticsData["history"]).forEach((value) {
+        value['viewType'] = viewType.item;
+        dataHolder.add(value);
+      });
+
+      setStateWrapper((){
+        _data = dataHolder;
+        _pageLoader = false;
+        (_data.length == 0) ? _hasData = false : _hasData = true;
+      });
+    }else{
+      setStateWrapper((){
+        _hasData = false;
+      });
     }
   }
 
@@ -95,10 +101,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
   Widget BuildPageLoader(BuildContext context){
     return new Container(
       alignment: Alignment.center,
-      child: AwesomeLoader(
-        loaderType: AwesomeLoader.AwesomeLoader4,
-        color: Colors.blue,
-      ),
+      child: AwesomeLoader(loaderType: AwesomeLoader.AwesomeLoader4, color: Colors.blue,),
     );
   }
 
@@ -145,6 +148,16 @@ class CovidStatisticsState extends State<CovidStatistics> {
     }
   }
 
+  void _navigateToHistoryScreen(BuildContext context, String locationKey){
+    Navigator
+      .of(context)
+      .push(MaterialPageRoute(builder: (context) => 
+            CovidHistory(apiKey: FlutterConfig.get('API_KEY'), 
+                         apiHost: FlutterConfig.get('API_URL'), 
+                         locationKey: locationKey))
+        );
+  }
+
   @protected
   Widget BuildListItem(BuildContext context, int index) {
     if( _data[index]['viewType'] == viewType.header ){
@@ -166,106 +179,113 @@ class CovidStatisticsState extends State<CovidStatistics> {
       showIcon = true;
     }
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 2.0),
-      child: Card(
-        elevation: 5,
-        child: new Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: Text((index).toString() + '. ' + _data[index]['country_name'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: (showIcon) 
-                      ? Container(
-                        child: FaIcon(FontAwesomeIcons.solidStar),
-                      ) 
-                      :  Text(''),
-                  )
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Expanded(
-                    child: RichText(
-                      textAlign: TextAlign.left,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Confirmed: ', style: TextStyle(color: Colors.black), 
-                          ),
-                          TextSpan(
-                            text: _data[index]['cases'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
-                          ),
-                        ]
-                      ),
+
+    return 
+      Padding(
+        padding: const EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 2.0),
+        child: Card(
+          elevation: 5,
+          child: InkWell(
+            onTap: () {
+              _navigateToHistoryScreen(context, _data[index]['country_name']);
+            },
+            child: new Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text((index).toString() + '. ' + _data[index]['country_name'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: (showIcon) 
+                        ? Container(
+                          child: FaIcon(FontAwesomeIcons.solidStar),
+                        ) 
+                        :  Text(''),
                     )
-                  ),
-                  Expanded(
-                    child: RichText(
-                      textAlign: TextAlign.left,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Recovered: ', style: TextStyle(color: Colors.black), 
-                          ),
-                          TextSpan(
-                            text: _data[index]['total_recovered'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
-                          ),
-                        ]
-                      ),
-                    )
-                  ),
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Expanded(
-                    child: RichText(
-                      textAlign: TextAlign.left,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Deaths: ', style: TextStyle(color: Colors.black), 
-                          ),
-                          TextSpan(
-                            text: _data[index]['deaths'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
-                          ),
-                        ]
-                      ),
-                    )
-                  ),
-                  Expanded(
-                    child: RichText(
-                      textAlign: TextAlign.left,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Active Cases: ', style: TextStyle(color: Colors.black), 
-                          ),
-                          TextSpan(
-                            text: _data[index]['active_cases'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
-                          ),
-                        ]
-                      ),
-                    )
-                  ),
-                ],
-              )
-            ],
+                  ],
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Expanded(
+                      child: RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Confirmed: ', style: TextStyle(color: Colors.black), 
+                            ),
+                            TextSpan(
+                              text: _data[index]['cases'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
+                            ),
+                          ]
+                        ),
+                      )
+                    ),
+                    Expanded(
+                      child: RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Recovered: ', style: TextStyle(color: Colors.black), 
+                            ),
+                            TextSpan(
+                              text: _data[index]['total_recovered'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
+                            ),
+                          ]
+                        ),
+                      )
+                    ),
+                  ],
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Expanded(
+                      child: RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Deaths: ', style: TextStyle(color: Colors.black), 
+                            ),
+                            TextSpan(
+                              text: _data[index]['deaths'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
+                            ),
+                          ]
+                        ),
+                      )
+                    ),
+                    Expanded(
+                      child: RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Active Cases: ', style: TextStyle(color: Colors.black), 
+                            ),
+                            TextSpan(
+                              text: _data[index]['active_cases'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
+                            ),
+                          ]
+                        ),
+                      )
+                    ),
+                  ],
+                )
+              ],
+            ),
+            ),
           ),
-        )
-      ),
+        ),
     );
   }
 
@@ -273,8 +293,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
   Widget BuildHistoryList(BuildContext context){
     if( !(_hasData) ){
       return Center(
-        child: Text(
-          'No available data to be displayed.',
+        child: Text('No available data to be displayed.',
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
       );
@@ -282,8 +301,7 @@ class CovidStatisticsState extends State<CovidStatistics> {
 
     return new Container(
       child: new ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: _listItemCount,
+        physics: const AlwaysScrollableScrollPhysics(), itemCount: _listItemCount,
         itemBuilder: (BuildContext context, int index) {
           return (index == (_listItemCount-1) && !(index == (_data.length - 1)) ) ? BuildListLoader(context, index) : BuildListItem(context, index);
         }
@@ -295,13 +313,16 @@ class CovidStatisticsState extends State<CovidStatistics> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text("World Statistics")
-      ),
-      body: Container(
-        child: (_pageLoader) ? BuildPageLoader(context) : BuildHistoryList(context),
-      ),
+      appBar: new AppBar(title: new Text("World Statistics")),
+      body: Container(child: (_pageLoader) ? BuildPageLoader(context) : BuildHistoryList(context),),
     );
   }
 
+  void setStateWrapper(Function function){
+    if( this.mounted ){
+      setState(() {
+        function();
+      });
+    }
+  }
 }

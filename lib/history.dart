@@ -51,12 +51,21 @@ class CovidHistoryState extends State<CovidHistory> {
     if( response.statusCode == 200 ){
         var data = json.decode(response.body);
         var countryData = data["stat_by_country"];
+        if( countryData == null || countryData.length == 0 ){
+          setStateWrapper(() {
+            _showLoader = false;
+            _hasHistory = false;
+          });
+          return false;
+        }
+
         var reversedCountryData = countryData.reversed.toList();
         List<dynamic> dateList = [], tempData = [];
 
         reversedCountryData.forEach((element) {
-          var formattedData = DateFormat("yyyy-MM-dd").format(DateTime.parse(rawFormatData(element['record_date'])));
-
+          var recordDate = ((element['record_date']).split('.'))[0];
+          var formattedData = DateFormat("yyyy-MM-dd").format(DateTime.parse(rawFormatData(recordDate)));
+         
           if( !dateList.contains(formattedData) ){
             tempData.add(element);
             dateList.add(formattedData);
@@ -66,6 +75,9 @@ class CovidHistoryState extends State<CovidHistory> {
         setStateWrapper((){
           _showLoader = false;
           _data = tempData;
+          if( _dataLoaded > _data.length ){
+            _dataLoaded = _data.length;
+          }
           if( _data.length == 0 ){
             _hasHistory = false;
           }else{
@@ -103,7 +115,7 @@ class CovidHistoryState extends State<CovidHistory> {
       }else{
         _dataLoaded = _dataLoaded + totalMinusLoaded;
       }
-
+      
       Future.delayed(const Duration(milliseconds: 500), () => {
         setStateWrapper((){
           _showLoaderList = false;
@@ -241,6 +253,8 @@ class CovidHistoryState extends State<CovidHistory> {
       );
     }
 
+    print(_dataLoaded);
+
     return new Container(
       child: new ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -271,7 +285,7 @@ class CovidHistoryState extends State<CovidHistory> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: new Text("PH Covid History"),
+          title: new Text("Covid History"),
           bottom: TabBar(
             tabs: [
               Tab(icon: FaIcon(FontAwesomeIcons.list)),
@@ -298,7 +312,7 @@ class CovidHistoryState extends State<CovidHistory> {
         child: Column(
           children: <Widget>[
             Text(
-              'PH Statistics for Covid-19 PH',
+              'Statistics for Covid-19 ('+locationKey+')',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20.0

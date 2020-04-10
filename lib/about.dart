@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_config/flutter_config.dart';
 
 class AboutPage extends StatelessWidget {
   final String title;
@@ -10,6 +11,10 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String isDebug = ""; 
+    if( FlutterConfig.get('FLUTTER_DEBUG').toString() == "true" ){
+      isDebug = " - Debug";
+    }
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(title)
@@ -74,7 +79,7 @@ class AboutPage extends StatelessWidget {
                 )
               ),
               Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0),),
-              Text('Version: 1.0.5 - Debug'),
+              Text('Version: ' + FlutterConfig.get('FLUTTER_VERSION').toString() + isDebug ),
               Text('Copyright 2020. All rights reseved.')
           ],
         ),
