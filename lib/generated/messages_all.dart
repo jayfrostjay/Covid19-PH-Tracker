@@ -15,6 +15,7 @@ class $en extends MessageLookupByLibrary {
   final messages = {
 		"APP_NAME" : MessageLookupByLibrary.simpleMessage("Covid-19 PH Tracker"),
 		"LABEL_DEBUG" : MessageLookupByLibrary.simpleMessage(" - Debug1"),
+		"LABEL_ACCOUNT_EMAIL" : MessageLookupByLibrary.simpleMessage("garciajy@gmail.com"),
 		"LABEL_ABOUT" : MessageLookupByLibrary.simpleMessage("About"),
 		"LABEL_VERSION" : (version) => "Version ${version}",
 		"LABEL_FLUTTER" : MessageLookupByLibrary.simpleMessage("Flutter"),
@@ -33,6 +34,19 @@ class $en extends MessageLookupByLibrary {
 		"LABEL_RECORD_DATE" : (date) => "Record Date: ${date}",
 		"LABEL_LOCATION" : (location) => "Location: ${location}",
 		"LABEL_NEW_RECORD" : (count) => "+${count} new",
+		"LABEL_LINKS_TRACKER" : MessageLookupByLibrary.simpleMessage("Tracker"),
+		"LABEL_LINKS_PH_HISTORY" : MessageLookupByLibrary.simpleMessage("PH History"),
+		"LABEL_LINKS_WORLD_STATS" : MessageLookupByLibrary.simpleMessage("World Statistics"),
+		"LABEL_LINKS_CLOSE" : MessageLookupByLibrary.simpleMessage("Close"),
+		"LABEL_NO_AVAILABLE_DATA" : MessageLookupByLibrary.simpleMessage("No available data to be displayed."),
+		"LABEL_LOAD_MORE" : MessageLookupByLibrary.simpleMessage("Load More..."),
+		"LABEL_CONFIRMED" : MessageLookupByLibrary.simpleMessage("Confirmed: "),
+		"LABEL_RECOVERED" : MessageLookupByLibrary.simpleMessage("Recovered: "),
+		"LABEL_DEATHS" : MessageLookupByLibrary.simpleMessage("Deaths: "),
+		"LABEL_ACTIVE_CASES" : MessageLookupByLibrary.simpleMessage("Active Cases: "),
+		"LABEL_RANK_TEMPLATE" : (rank, name) => "${rank}. ${name}",
+		"LABEL_NEW_CASES" : MessageLookupByLibrary.simpleMessage("New Cases: "),
+		"LABEL_NEW_DEATHS" : MessageLookupByLibrary.simpleMessage("New Deaths: "),
 
   };
 }

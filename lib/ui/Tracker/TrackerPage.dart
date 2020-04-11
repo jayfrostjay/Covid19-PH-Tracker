@@ -57,7 +57,7 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
   }
 
   @override
-  Widget listLoader() {
+  Widget listLoader(BuildContext context, int index) {
     return null;
   }
 
@@ -239,6 +239,12 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
         ],
     );
   }
+
+  @override
+  Widget pageLoader() {
+    // TODO: implement pageLoader
+    return null;
+  }
  
   @override
   Widget build(BuildContext context) {
@@ -252,5 +258,4 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
       drawer: CustomDrawers()
     ); 
   }
-
 }

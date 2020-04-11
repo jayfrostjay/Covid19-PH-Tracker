@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:phcovid19tracker/data/Drawer/DrawerDetailContent.dart';
 import 'package:phcovid19tracker/data/Drawer/DrawerListTileContent.dart';
+import 'package:phcovid19tracker/generated/i18n.dart';
 
 class CustomDrawers extends StatelessWidget {
-  final DrawerDetailContent detailContent = new DrawerDetailContent("Covid-19 PH Tracker", "garciajyh@gmail.com", Image.asset('assets/images/test.jpg'));
-
+  
   static TopDetailView({Image imageAsset, String accountName, String accountEmail}){
     return UserAccountsDrawerHeader(
       accountName:  Text(accountName),
@@ -41,27 +41,33 @@ class CustomDrawers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DrawerDetailContent detailContent = new DrawerDetailContent(
+      S.of(context).APP_NAME, 
+      S.of(context).LABEL_ACCOUNT_EMAIL, 
+      Image.asset('assets/images/test.jpg')
+    );
+    
     // TODO: implement build
     List<Widget> tiles ;
     return Drawer(
       child: ListView(
         children: <Widget>[
-          CustomDrawers.TopDetailView(imageAsset: this.detailContent.accountImage, accountName: this.detailContent.accountName, accountEmail: this.detailContent.accountEmail),
+          CustomDrawers.TopDetailView(imageAsset: detailContent.accountImage, accountName: detailContent.accountName, accountEmail: detailContent.accountEmail),
           buildDrawerItem(
-            content: DrawerListTileContent(Icon(Icons.track_changes), "Tracker", () => { Navigator.pop(context) })
+            content: DrawerListTileContent(Icon(Icons.track_changes), S.of(context).LABEL_LINKS_TRACKER, () => { Navigator.pop(context) })
           ),
           buildDrawerItem(
-            content: DrawerListTileContent(Icon(Icons.history), "PH History", () => { Navigator.of(context).pushNamed("/history") })
+            content: DrawerListTileContent(Icon(Icons.history), S.of(context).LABEL_LINKS_PH_HISTORY, () => { Navigator.of(context).pushNamed("/history") })
           ),
           buildDrawerItem(
-            content: DrawerListTileContent(Icon(FontAwesomeIcons.chartLine), "World Statistics", () => { Navigator.of(context).pushNamed("/statistics") })
+            content: DrawerListTileContent(Icon(FontAwesomeIcons.chartLine), S.of(context).LABEL_LINKS_WORLD_STATS, () => { Navigator.of(context).pushNamed("/worldStats") })
           ),
           buildDrawerItem(
-            content: DrawerListTileContent(Icon(Icons.info), "About", () => { Navigator.of(context).pushNamed("/about") })
+            content: DrawerListTileContent(Icon(Icons.info), S.of(context).LABEL_ABOUT, () => { Navigator.of(context).pushNamed("/about") })
           ),
           Divider(),
           buildDrawerItem(
-            content: DrawerListTileContent(Icon(Icons.close), "Close", () => { Navigator.pop(context) })
+            content: DrawerListTileContent(Icon(Icons.close), S.of(context).LABEL_LINKS_CLOSE, () => { Navigator.pop(context) })
           ),
         ],
       )

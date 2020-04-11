@@ -27,7 +27,6 @@ class CovidRepository implements AbstractCovidRepository {
 
   @override
   Future<LatestCountryStats> fetchCountryLatestStats(String countryName) async {
-    // TODO: implement fetchCountryLatestStats
     final response = await requestWrapper(
       url: '$API_URL$LATEST_STATS?country=$countryName',
       headers:  {
@@ -47,7 +46,6 @@ class CovidRepository implements AbstractCovidRepository {
 
   @override
   Future<Map<String, dynamic>> fetchWorldLatestStats() async {
-    // TODO: implement fetchWorldLatestStats
     final response = await requestWrapper(
       url: '$API_URL$WORLD_STATS',
       headers:  {
@@ -59,11 +57,10 @@ class CovidRepository implements AbstractCovidRepository {
 
     if( NetworkUtils.isResponseSuccess(response) ){
       var data = json.decode(response.body);
-      Map<String, dynamic> output = {
+      return {
         "date" :  data["statistic_taken_at"],
         "history" : data["countries_stat"]
       };
-      return output;
     } else{
       throw new APIException("Error: [Function:fetchWorldLatestStats] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
     }
@@ -71,7 +68,6 @@ class CovidRepository implements AbstractCovidRepository {
 
   @override
   Future<List<HistoryItem>> fetchCountryHistory(String countryName) async {
-    // TODO: implement fetchCountryHistory
     final response = await requestWrapper(
       url: '$API_URL$HISTORY_BY_COUNTRY?countryName=$countryName',
       headers:  {

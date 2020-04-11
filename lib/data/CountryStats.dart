@@ -1,36 +1,32 @@
-import 'package:phcovid19tracker/utils/DateUtils.dart';
-
 class CountryStats {
+  String countryName;
   String confirmed;
   String deaths;
   String recovered;
   String activeCases;
-  String recordDate;
-  String formattedRecordDate;
+  String newCases;
+  String newDeaths;
 
-  CountryStats({this.confirmed, this.deaths, this.recovered, this.activeCases, this.recordDate}){
-    this.formatRecordDate();
-  }
+  CountryStats({this.countryName, this.confirmed, this.deaths, this.recovered, this.activeCases, this.newCases, this.newDeaths});
 
   CountryStats.fromMap(Map<String, dynamic> map) :
-    confirmed = map["confirmed"],
+    countryName = map["country_name"],
+    confirmed = map["cases"],
     deaths = map["deaths"],
-    recovered = map["recovered"],
+    recovered = map["total_recovered"],
     activeCases = map["active_cases"],
-    recordDate = map["record_date"];
+    newCases = map["new_cases"],
+    newDeaths = map["new_deaths"];
 
-  void formatRecordDate() {
-    String formattedRecordDate = DateUtils.formatDateTime("E MMM dd, yyyy - hh:mm:ss a", DateUtils.timestampToDateTime(this.recordDate));
-    this.recordDate = formattedRecordDate;
-  }
-
-  CountryStats copyWith({confirmed, deaths, recovered, activeCases, recordDate}){
+  CountryStats copyWith({countryName, confirmed, deaths, recovered, activeCases, recordDate, newCases, newDeaths}){
     return CountryStats(
       confirmed: confirmed ?? this.confirmed,
       deaths: deaths ?? this.confirmed,
       recovered: recovered ?? this.recovered,
       activeCases: activeCases ?? this.activeCases,
-      recordDate: recordDate ?? this.recordDate
+      countryName: recordDate ?? this.countryName,
+      newDeaths: newDeaths ?? this.newDeaths,
+      newCases: newCases ?? this.newCases
     );
   }
 }

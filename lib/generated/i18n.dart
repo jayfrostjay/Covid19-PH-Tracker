@@ -34,6 +34,10 @@ class S {
     return Intl.message(" - Debug1", name: 'LABEL_DEBUG');
   }
 
+  String get LABEL_ACCOUNT_EMAIL {
+    return Intl.message("garciajy@gmail.com", name: 'LABEL_ACCOUNT_EMAIL');
+  }
+
   String get LABEL_ABOUT {
     return Intl.message("About", name: 'LABEL_ABOUT');
   }
@@ -104,6 +108,58 @@ class S {
 
   String LABEL_NEW_RECORD(count) {
     return Intl.message("+${count} new", name: 'LABEL_NEW_RECORD', args: [count]);
+  }
+
+  String get LABEL_LINKS_TRACKER {
+    return Intl.message("Tracker", name: 'LABEL_LINKS_TRACKER');
+  }
+
+  String get LABEL_LINKS_PH_HISTORY {
+    return Intl.message("PH History", name: 'LABEL_LINKS_PH_HISTORY');
+  }
+
+  String get LABEL_LINKS_WORLD_STATS {
+    return Intl.message("World Statistics", name: 'LABEL_LINKS_WORLD_STATS');
+  }
+
+  String get LABEL_LINKS_CLOSE {
+    return Intl.message("Close", name: 'LABEL_LINKS_CLOSE');
+  }
+
+  String get LABEL_NO_AVAILABLE_DATA {
+    return Intl.message("No available data to be displayed.", name: 'LABEL_NO_AVAILABLE_DATA');
+  }
+
+  String get LABEL_LOAD_MORE {
+    return Intl.message("Load More...", name: 'LABEL_LOAD_MORE');
+  }
+
+  String get LABEL_CONFIRMED {
+    return Intl.message("Confirmed: ", name: 'LABEL_CONFIRMED');
+  }
+
+  String get LABEL_RECOVERED {
+    return Intl.message("Recovered: ", name: 'LABEL_RECOVERED');
+  }
+
+  String get LABEL_DEATHS {
+    return Intl.message("Deaths: ", name: 'LABEL_DEATHS');
+  }
+
+  String get LABEL_ACTIVE_CASES {
+    return Intl.message("Active Cases: ", name: 'LABEL_ACTIVE_CASES');
+  }
+
+  String LABEL_RANK_TEMPLATE(rank, name) {
+    return Intl.message("${rank}. ${name}", name: 'LABEL_RANK_TEMPLATE', args: [rank, name]);
+  }
+
+  String get LABEL_NEW_CASES {
+    return Intl.message("New Cases: ", name: 'LABEL_NEW_CASES');
+  }
+
+  String get LABEL_NEW_DEATHS {
+    return Intl.message("New Deaths: ", name: 'LABEL_NEW_DEATHS');
   }
 
 

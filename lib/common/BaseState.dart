@@ -5,5 +5,6 @@ abstract class BaseState {
   void defaultState();
   bool isLandscape();
   void progressDialog();
-  Widget listLoader();
+  Widget listLoader(BuildContext context, int index);
+  Widget pageLoader();
 }
