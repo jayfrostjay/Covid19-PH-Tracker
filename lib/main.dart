@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:phcovid19tracker/di/DependencyInjectors.dart';
+import 'package:phcovid19tracker/ui/History/HistoryPage.dart';
 import 'package:phcovid19tracker/ui/Tracker/TrackerPage.dart';
 import 'package:phcovid19tracker/ui/WorldStats/WorldStatsPage.dart';
-import './history.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'ui/About/AboutView.dart';
 import 'package:phcovid19tracker/generated/i18n.dart';
@@ -18,7 +18,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final routes = {
     "/about" : (BuildContext context) => new AboutPage(),
-    "/history" : (BuildContext context) => new CovidHistory(apiKey: FlutterConfig.get('API_KEY'), apiHost: FlutterConfig.get('API_URL'), locationKey: FlutterConfig.get('API_COUNTRY_KEY')),
+    "/countryHistory" : (BuildContext context) => new HistoryPage(countryName: FlutterConfig.get('API_COUNTRY_KEY'),),
     "/worldStats" : (BuildContext context) => new WorldStatsPage()
   };
   @override

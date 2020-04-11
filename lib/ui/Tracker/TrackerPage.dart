@@ -22,7 +22,7 @@ class TrackerPage extends StatefulWidget {
 
 class _TrackerPageState extends State<TrackerPage> implements TrackerPageContract, BaseState {
 
-  TrackerViewPresenter _presenter;
+  TrackerPresenter _presenter;
   BuildContext _context;
   bool _isFetching;
   ProgressDialog _progressDialog; 
@@ -34,7 +34,7 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
   static const String KEY_CONFIRMED = "confirmed";
 
   _TrackerPageState() {
-    _presenter = TrackerViewPresenter(this);
+    _presenter = TrackerPresenter(this);
   }
 
   @override
@@ -140,7 +140,7 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
         cardColor = Colors.blue;
         break;
       default:
-        newUpdates = S.of(context).LABEL_NEW_RECORD(newDeaths);
+        newUpdates = S.of(context).LABEL_NEW_RECORD(newCases);
         break;
     } 
 

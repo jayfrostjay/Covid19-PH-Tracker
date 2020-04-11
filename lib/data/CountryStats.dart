@@ -1,3 +1,5 @@
+import 'package:phcovid19tracker/utils/DateUtils.dart';
+
 class CountryStats {
   String countryName;
   String confirmed;
@@ -6,27 +8,37 @@ class CountryStats {
   String activeCases;
   String newCases;
   String newDeaths;
+  String recordDate;
+  String formattedRecordDate;
 
-  CountryStats({this.countryName, this.confirmed, this.deaths, this.recovered, this.activeCases, this.newCases, this.newDeaths});
+  CountryStats({this.countryName, this.confirmed, this.deaths, this.recovered, this.activeCases, this.newCases, this.newDeaths, this.recordDate});
 
   CountryStats.fromMap(Map<String, dynamic> map) :
     countryName = map["country_name"],
-    confirmed = map["cases"],
-    deaths = map["deaths"],
+    confirmed = map["cases"] ?? map["total_cases"],
+    deaths = map["deaths"] ?? map["total_deaths"],
     recovered = map["total_recovered"],
     activeCases = map["active_cases"],
     newCases = map["new_cases"],
-    newDeaths = map["new_deaths"];
+    newDeaths = map["new_deaths"],
+    recordDate = map["record_date"];
 
-  CountryStats copyWith({countryName, confirmed, deaths, recovered, activeCases, recordDate, newCases, newDeaths}){
+  CountryStats copyWith({countryName, confirmed, deaths, recovered, activeCases, newCases, newDeaths, recordDate}){
     return CountryStats(
       confirmed: confirmed ?? this.confirmed,
       deaths: deaths ?? this.confirmed,
       recovered: recovered ?? this.recovered,
       activeCases: activeCases ?? this.activeCases,
-      countryName: recordDate ?? this.countryName,
+      countryName: countryName ?? this.countryName,
       newDeaths: newDeaths ?? this.newDeaths,
-      newCases: newCases ?? this.newCases
+      newCases: newCases ?? this.newCases,
+      recordDate: recordDate ?? this.recordDate
     );
+  }
+
+  String formatRecordDate() {
+    String formattedRecordDate = DateUtils.formatDateTime("E MMM dd, yyyy", DateUtils.timestampToDateTime(this.recordDate));
+    this.formattedRecordDate = formattedRecordDate;
+    return this.formattedRecordDate;
   }
 }

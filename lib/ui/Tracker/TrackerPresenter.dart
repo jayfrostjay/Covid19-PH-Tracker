@@ -2,11 +2,11 @@ import 'package:phcovid19tracker/repository/CovidRepository.dart';
 import '../../di/DependencyInjectors.dart';
 import 'TrackerPageContract.dart';
 
-class TrackerViewPresenter {
+class TrackerPresenter {
   TrackerPageContract _view;
   CovidRepository _repository;
 
-  TrackerViewPresenter(this._view){
+  TrackerPresenter(this._view){
     _repository = DependencyInjectors().covidRepository;
   }
 

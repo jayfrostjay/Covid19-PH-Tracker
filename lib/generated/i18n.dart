@@ -35,7 +35,7 @@ class S {
   }
 
   String get LABEL_ACCOUNT_EMAIL {
-    return Intl.message("garciajy@gmail.com", name: 'LABEL_ACCOUNT_EMAIL');
+    return Intl.message("jayfrostgarcia@gmail.com", name: 'LABEL_ACCOUNT_EMAIL');
   }
 
   String get LABEL_ABOUT {
@@ -160,6 +160,30 @@ class S {
 
   String get LABEL_NEW_DEATHS {
     return Intl.message("New Deaths: ", name: 'LABEL_NEW_DEATHS');
+  }
+
+  String get LABEL_COVID_HISTORY {
+    return Intl.message("Covid History", name: 'LABEL_COVID_HISTORY');
+  }
+
+  String LABEL_COUNTRY_COVID_HISTORY(country) {
+    return Intl.message("Statistics for Covid-19 (${country})", name: 'LABEL_COUNTRY_COVID_HISTORY', args: [country]);
+  }
+
+  String get LABEL_BUTTON_CONFIRMED {
+    return Intl.message("Confirmed", name: 'LABEL_BUTTON_CONFIRMED');
+  }
+
+  String get LABEL_BUTTON_RECOVERED {
+    return Intl.message("Recovered", name: 'LABEL_BUTTON_RECOVERED');
+  }
+
+  String get LABEL_BUTTON_DEATHS {
+    return Intl.message("Deaths", name: 'LABEL_BUTTON_DEATHS');
+  }
+
+  String get LABEL_BUTTON_NEW_CASES {
+    return Intl.message("New Cases", name: 'LABEL_BUTTON_NEW_CASES');
   }
 
 

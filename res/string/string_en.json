@@ -1,7 +1,7 @@
 {
     "APP_NAME": "Covid-19 PH Tracker",
     "LABEL_DEBUG" : " - Debug1",
-    "LABEL_ACCOUNT_EMAIL" : "garciajy@gmail.com",
+    "LABEL_ACCOUNT_EMAIL" : "jayfrostgarcia@gmail.com",
     "LABEL_ABOUT" : "About",
     "LABEL_VERSION" : "Version ${version}",
     "LABEL_FLUTTER" : "Flutter",
@@ -37,5 +37,12 @@
     "LABEL_ACTIVE_CASES" : "Active Cases: ",
     "LABEL_RANK_TEMPLATE" : "${rank}. ${name}",
     "LABEL_NEW_CASES" : "New Cases: ",
-    "LABEL_NEW_DEATHS" : "New Deaths: "
+    "LABEL_NEW_DEATHS" : "New Deaths: ",
+    "LABEL_COVID_HISTORY" : "Covid History",
+    "LABEL_COUNTRY_COVID_HISTORY" : "Statistics for Covid-19 (${country})",
+
+    "LABEL_BUTTON_CONFIRMED" : "Confirmed",
+    "LABEL_BUTTON_RECOVERED" : "Recovered",
+    "LABEL_BUTTON_DEATHS" : "Deaths",
+    "LABEL_BUTTON_NEW_CASES" : "New Cases"
 }

@@ -15,7 +15,7 @@ class $en extends MessageLookupByLibrary {
   final messages = {
 		"APP_NAME" : MessageLookupByLibrary.simpleMessage("Covid-19 PH Tracker"),
 		"LABEL_DEBUG" : MessageLookupByLibrary.simpleMessage(" - Debug1"),
-		"LABEL_ACCOUNT_EMAIL" : MessageLookupByLibrary.simpleMessage("garciajy@gmail.com"),
+		"LABEL_ACCOUNT_EMAIL" : MessageLookupByLibrary.simpleMessage("jayfrostgarcia@gmail.com"),
 		"LABEL_ABOUT" : MessageLookupByLibrary.simpleMessage("About"),
 		"LABEL_VERSION" : (version) => "Version ${version}",
 		"LABEL_FLUTTER" : MessageLookupByLibrary.simpleMessage("Flutter"),
@@ -47,6 +47,12 @@ class $en extends MessageLookupByLibrary {
 		"LABEL_RANK_TEMPLATE" : (rank, name) => "${rank}. ${name}",
 		"LABEL_NEW_CASES" : MessageLookupByLibrary.simpleMessage("New Cases: "),
 		"LABEL_NEW_DEATHS" : MessageLookupByLibrary.simpleMessage("New Deaths: "),
+		"LABEL_COVID_HISTORY" : MessageLookupByLibrary.simpleMessage("Covid History"),
+		"LABEL_COUNTRY_COVID_HISTORY" : (country) => "Statistics for Covid-19 (${country})",
+		"LABEL_BUTTON_CONFIRMED" : MessageLookupByLibrary.simpleMessage("Confirmed"),
+		"LABEL_BUTTON_RECOVERED" : MessageLookupByLibrary.simpleMessage("Recovered"),
+		"LABEL_BUTTON_DEATHS" : MessageLookupByLibrary.simpleMessage("Deaths"),
+		"LABEL_BUTTON_NEW_CASES" : MessageLookupByLibrary.simpleMessage("New Cases"),
 
   };
 }

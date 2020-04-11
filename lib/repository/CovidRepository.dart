@@ -1,4 +1,4 @@
-import 'package:phcovid19tracker/data/HistoryItem.dart';
+import 'package:phcovid19tracker/data/CountryStats.dart';
 import 'package:phcovid19tracker/data/LatestCountryStats.dart';
 import 'package:phcovid19tracker/repository/APIException.dart';
 import 'package:phcovid19tracker/repository/AbstractCovidRepository.dart';
@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show json;
 import 'package:flutter_config/flutter_config.dart';
+import 'package:phcovid19tracker/utils/DateUtils.dart';
 import 'package:phcovid19tracker/utils/NetworkUtils.dart';
 
 class CovidRepository implements AbstractCovidRepository {
@@ -67,9 +68,9 @@ class CovidRepository implements AbstractCovidRepository {
   }
 
   @override
-  Future<List<HistoryItem>> fetchCountryHistory(String countryName) async {
+  Future<List<CountryStats>> fetchCountryHistory(String countryName) async {
     final response = await requestWrapper(
-      url: '$API_URL$HISTORY_BY_COUNTRY?countryName=$countryName',
+      url: '$API_URL$HISTORY_BY_COUNTRY?country=$countryName',
       headers:  {
         "Accept" : "application/json",
         "x-rapidapi-host" : HEADER_API_URL, 
@@ -78,7 +79,18 @@ class CovidRepository implements AbstractCovidRepository {
     );
     if( NetworkUtils.isResponseSuccess(response) ){
       var data = json.decode(response.body);
-      return data["stat_by_country"] as List<HistoryItem>;
+      var history = data["stat_by_country"].reversed.toList();
+      List<String> dateList = [];
+      List<CountryStats> returnData = [];
+
+      history.forEach((item){
+        String formattedDate = DateUtils.formatDateTime("yyyy-MM-dd", DateUtils.timestampToDateTime(item["record_date"])); 
+        if( !dateList.contains(formattedDate) ){
+          dateList.add(formattedDate);
+          returnData.add(new CountryStats.fromMap(item));
+        }
+      });
+      return returnData;
     } else{
       throw new APIException("Error: [Function:fetchWorldLatestStats] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
     }

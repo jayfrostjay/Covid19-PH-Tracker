@@ -5,7 +5,7 @@ import 'package:phcovid19tracker/common/BaseState.dart';
 import 'package:phcovid19tracker/data/CountryStats.dart';
 import 'package:phcovid19tracker/data/ListViewHolder.dart';
 import 'package:phcovid19tracker/generated/i18n.dart';
-import 'package:phcovid19tracker/history.dart';
+import 'package:phcovid19tracker/ui/History/HistoryPage.dart';
 import 'package:phcovid19tracker/ui/WorldStats/WorldStatsPresenter.dart';
 import 'package:phcovid19tracker/utils/DateUtils.dart';
 import 'package:phcovid19tracker/utils/StringUtil.dart';
@@ -159,9 +159,7 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
     Navigator
       .of(context)
       .push(MaterialPageRoute(builder: (context) => 
-            CovidHistory(apiKey: FlutterConfig.get('API_KEY'), 
-                         apiHost: FlutterConfig.get('API_URL'), 
-                         locationKey: locationKey))
+            HistoryPage(countryName: locationKey))
     );
   }
 
