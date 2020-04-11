@@ -71,6 +71,10 @@ class CovidStatisticsState extends State<CovidStatistics> {
     }
   }
 
+  int stringToInteger(String count){
+    return int.parse(count.replaceAll(",", ""));
+  }
+
   _pullStatisticsData() async {
     var dataHolder = [];
     var statisticsData = await _fetchStatistics();
@@ -80,6 +84,9 @@ class CovidStatisticsState extends State<CovidStatistics> {
         'stat_date' : formatData(statisticsData['date']).toString(),
         'viewType' : viewType.header
       });
+
+      (statisticsData["history"]).sort((a, b) => stringToInteger(b['cases']).compareTo(stringToInteger(a['cases'])));
+
       (statisticsData["history"]).forEach((value) {
         value['viewType'] = viewType.item;
         dataHolder.add(value);

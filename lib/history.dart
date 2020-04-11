@@ -253,7 +253,7 @@ class CovidHistoryState extends State<CovidHistory> {
       );
     }
 
-    print(_dataLoaded);
+    // print(_dataLoaded);
 
     return new Container(
       child: new ListView.builder(
@@ -322,7 +322,9 @@ class CovidHistoryState extends State<CovidHistory> {
               child: charts.BarChart(
                 _createItems(),
                 animate: true,
-                barGroupingType: charts.BarGroupingType.grouped,
+                defaultRenderer: new charts.BarRendererConfig(
+                  groupingType: charts.BarGroupingType.groupedStacked,
+                ),
                 animationDuration: Duration(milliseconds: 500),
               )
             ),
@@ -417,13 +419,13 @@ class CovidHistoryState extends State<CovidHistory> {
     (_data).asMap().forEach((index, value) => {
       (index < (_graphShowCount)) ? {
         confirmedData.add(
-          new HistoryItem(DateFormat("MMM dd, yyyy").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_cases']).replaceAll(',', '') ))
+          new HistoryItem(DateFormat("MMM dd").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_cases']).replaceAll(',', '') ))
         ),
         recoveredData.add(
-          new HistoryItem(DateFormat("MMM dd, yyyy").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_recovered']).replaceAll(',', '') ))
+          new HistoryItem(DateFormat("MMM dd").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_recovered']).replaceAll(',', '') ))
         ),
         deathsData.add(
-          new HistoryItem(DateFormat("MMM dd, yyyy").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_deaths']).replaceAll(',', '') ))
+          new HistoryItem(DateFormat("MMM dd").format(DateTime.parse(rawFormatData(value["record_date"]))), int.parse( (value['total_deaths']).replaceAll(',', '') ))
         )
       } : {}
     });   
@@ -467,11 +469,11 @@ class CovidHistoryState extends State<CovidHistory> {
     Orientation currentOrientation = MediaQuery.of(context).orientation;
     if( currentOrientation == Orientation.landscape ){
       setStateWrapper((){
-        _graphShowCount = 8;
+        _graphShowCount = 12;
       });
     }else{
       setStateWrapper((){
-        _graphShowCount = 3;
+        _graphShowCount = 5;
       });
     }
   }
