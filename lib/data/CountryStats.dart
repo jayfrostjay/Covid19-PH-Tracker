@@ -17,10 +17,10 @@ class CountryStats {
     countryName = map["country_name"],
     confirmed = map["cases"] ?? map["total_cases"],
     deaths = map["deaths"] ?? map["total_deaths"],
-    recovered = map["total_recovered"],
-    activeCases = map["active_cases"],
-    newCases = map["new_cases"],
-    newDeaths = map["new_deaths"],
+    recovered = (map["total_recovered"] != "") ? map["total_recovered"] : "0",
+    activeCases = (map["active_cases"] != "") ? map["active_cases"] : "0",
+    newCases = (map["new_cases"] != "") ? map["new_cases"] : "0",
+    newDeaths = (map["new_deaths"] != "") ? map["new_deaths"] : "0" ,
     recordDate = map["record_date"];
 
   CountryStats copyWith({countryName, confirmed, deaths, recovered, activeCases, newCases, newDeaths, recordDate}){

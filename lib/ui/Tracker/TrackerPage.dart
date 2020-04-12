@@ -127,7 +127,7 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
         icon = FontAwesomeIcons.skullCrossbones;
         title = S.of(context).LABEL_TOTAL_DEATHS;
         cardColor = Colors.red;
-        newUpdates = S.of(context).LABEL_NEW_RECORD(newDeaths);
+        newUpdates = S.of(context).LABEL_NEW_RECORD((newCases != "") ? newCases : "0");
         break;
       case KEY_RECOVERED:
         icon = FontAwesomeIcons.userShield;
@@ -140,7 +140,7 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
         cardColor = Colors.blue;
         break;
       default:
-        newUpdates = S.of(context).LABEL_NEW_RECORD(newCases);
+        newUpdates = S.of(context).LABEL_NEW_RECORD((newCases != "")  ? newCases : "0");
         break;
     } 
 
