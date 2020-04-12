@@ -34,10 +34,9 @@ class AboutPage extends StatelessWidget {
       children: <Widget>[
         CircleAvatar(
           radius: 100.0,
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.white,
           // child: new Text("PH", style: TextStyle(fontSize: 50.0, color: Colors.white),)
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(100.0),
             child: Image.asset('assets/images/test.jpg'),
           )
         ),

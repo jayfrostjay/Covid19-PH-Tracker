@@ -6,15 +6,14 @@ import 'package:phcovid19tracker/generated/i18n.dart';
 
 class CustomDrawers extends StatelessWidget {
   
-  static TopDetailView({Image imageAsset, String accountName, String accountEmail}){
+  static topDetailView({String imageAsset, String accountName, String accountEmail}){
     return UserAccountsDrawerHeader(
       accountName:  Text(accountName),
       accountEmail: Text(accountEmail),
       currentAccountPicture: CircleAvatar(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50.0),
-          child: imageAsset
-        ),
+        radius: 30.0,
+        backgroundColor: Colors.transparent,
+        backgroundImage: AssetImage(imageAsset),
       ),
     );
   }
@@ -44,7 +43,7 @@ class CustomDrawers extends StatelessWidget {
     DrawerDetailContent detailContent = new DrawerDetailContent(
       S.of(context).APP_NAME, 
       S.of(context).LABEL_ACCOUNT_EMAIL, 
-      Image.asset('assets/images/test.jpg')
+      'assets/images/test.jpg'
     );
     
     // TODO: implement build
@@ -52,7 +51,7 @@ class CustomDrawers extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: <Widget>[
-          CustomDrawers.TopDetailView(imageAsset: detailContent.accountImage, accountName: detailContent.accountName, accountEmail: detailContent.accountEmail),
+          CustomDrawers.topDetailView(imageAsset: detailContent.accountImage, accountName: detailContent.accountName, accountEmail: detailContent.accountEmail),
           buildDrawerItem(
             content: DrawerListTileContent(Icon(Icons.track_changes), S.of(context).LABEL_LINKS_TRACKER, () => { Navigator.pop(context) })
           ),

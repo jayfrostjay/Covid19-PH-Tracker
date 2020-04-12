@@ -154,7 +154,7 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
             confirmedData.add(new HistoryGraphData(dateFormatted, StringUtil.stringToInt(value.confirmed))),
             recoveredData.add(new HistoryGraphData(dateFormatted, StringUtil.stringToInt(value.recovered))),
             deathsData.add(new HistoryGraphData(dateFormatted, StringUtil.stringToInt(value.deaths))),
-            newCasesData.add(new HistoryGraphData(dateFormatted, StringUtil.stringToInt(value.deaths))),
+            newCasesData.add(new HistoryGraphData(dateFormatted, StringUtil.stringToInt(value.newCases))),
       } : {}
     });   
 
@@ -196,7 +196,7 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
         domainFn: (HistoryGraphData item, _) => item.historyDate,
         measureFn: (HistoryGraphData item, _) => item.count,
-        data: deathsData.reversed.toList(),
+        data: newCasesData.reversed.toList(),
       ));
     }  
  
@@ -214,10 +214,8 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
               child: charts.BarChart(
                 createChartData(),
                 animate: true,
-                defaultRenderer: new charts.BarRendererConfig(
-                  groupingType: charts.BarGroupingType.groupedStacked,
-                ),
                 animationDuration: Duration(milliseconds: 500),
+                vertical: true,
               )
             ),
             buildChartsLegends(context)
