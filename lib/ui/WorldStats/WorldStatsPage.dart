@@ -305,7 +305,7 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
         }); 
         break;
       default:
-        _isAscending = false;
+        hasChanges = false;
         break;
     }
 
@@ -313,7 +313,7 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
       tempList.add(new ListViewHolder(viewType: ListViewHolderViewType.item, data: element));
     });
     
-    if( _isAscending ){
+    if( hasChanges ){
       setStateWrapper((){
         _list = tempList;
         _isAscending = !(_isAscending);

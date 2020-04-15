@@ -7,7 +7,7 @@ class DateUtils {
     dateStringSplit = dateStringSplit.replaceAll('-', '');
     dateStringSplit = dateStringSplit.replaceAll(':', '');
     dateStringSplit = dateStringSplit.substring(0, 8) + 'T' + dateStringSplit.substring(8);
-    return DateTime.parse(dateStringSplit);
+    return (DateTime.tryParse(dateStringSplit) != null) ? DateTime.tryParse(dateStringSplit) : dateString;
   }
 
   static String formatDateTime(String dateFormat, DateTime dateTime){
@@ -16,4 +16,8 @@ class DateUtils {
     }
     return DateFormat(dateFormat).format(dateTime);
   } 
+
+  static String tryParse(String dateString){
+    return (DateTime.tryParse(dateString) != null) ? DateTime.tryParse(dateString).toString() : "false";
+  }
 }

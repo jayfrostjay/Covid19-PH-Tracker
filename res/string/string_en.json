@@ -6,12 +6,15 @@
     "LABEL_VERSION" : "Version ${version}",
     "LABEL_FLUTTER" : "Flutter",
     "LABEL_DEVELOPED_USING" : "Developed using ",
-    "LABEL_DATA_FROM" : " Data from ",
+    "LABEL_DATA_FROM" : " Data from: ",
     "LABEL_RAPID_API" : "RapidAPI", 
     "LABEL_COPYRIGHTS" : "Copyright 2020. All rights reseved.",
 
     "URL_FLUTTER" : "https://flutter.dev",
     "URL_RAPID_API" : "https://rapidapi.com/astsiatsko/api/coronavirus-monitor",
+
+    "LABEL_HEROKU_API" : "Coronavirus-PH", 
+    "URL_HEROKU_API" : "https://coronavirus-ph-api.herokuapp.com/",
 
     "LABEL_PULL_SERVER_DATA" : "Pulling Data from Server...",
     "LABEL_ERROR_FETCHING_DATA" : "Error fetching data... [${error}]",
@@ -48,5 +51,17 @@
     "LABEL_BUTTON_NEW_CASES" : "New Cases",
 
     "LABEL_PH_PATIENT_LIST" : "PH Patient List",
-    "LABEL_COUNTRY" : "Country"
+    "LABEL_COUNTRY" : "Country",
+
+    "DROPDOWN_ALL_REGIONS" : "All Regions",
+    "DROPDOWN_ALL_STATUS" : "All Status",
+
+    "LABEL_CASE_NUMER" : "PH ${number}",
+    "LABEL_DATE_ADMITTED" : "Date Admitted: ${date}",
+    "LABEL_HOSPITAL" : "Hospital: ${s}",
+    "LABEL_AGE" : "Age: ${s}",
+    "LABEL_NATIONALITY" : "Nationality: ${s}",
+    "LABEL_STATUS" : "Status: ${s}",
+    "LABEL_REGION_VALUE" : "Region: ${s}",
+    "LABEL_TOTAL_PATIENTS" : "Total: "
 }

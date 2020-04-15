@@ -113,6 +113,9 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
 
   @override
   void onLoadStatsError(String onError) {
+    setStateWrapper((){
+      _isFetching = false;
+    });
     progressDialog();
     ToastUtil.showFlutterToast(message: S.of(context).LABEL_ERROR_FETCHING_DATA(onError));
   }

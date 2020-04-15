@@ -55,7 +55,7 @@ class S {
   }
 
   String get LABEL_DATA_FROM {
-    return Intl.message(" Data from ", name: 'LABEL_DATA_FROM');
+    return Intl.message(" Data from: ", name: 'LABEL_DATA_FROM');
   }
 
   String get LABEL_RAPID_API {
@@ -72,6 +72,14 @@ class S {
 
   String get URL_RAPID_API {
     return Intl.message("https://rapidapi.com/astsiatsko/api/coronavirus-monitor", name: 'URL_RAPID_API');
+  }
+
+  String get LABEL_HEROKU_API {
+    return Intl.message("Coronavirus-PH", name: 'LABEL_HEROKU_API');
+  }
+
+  String get URL_HEROKU_API {
+    return Intl.message("https://coronavirus-ph-api.herokuapp.com/", name: 'URL_HEROKU_API');
   }
 
   String get LABEL_PULL_SERVER_DATA {
@@ -196,6 +204,46 @@ class S {
 
   String get LABEL_COUNTRY {
     return Intl.message("Country", name: 'LABEL_COUNTRY');
+  }
+
+  String get DROPDOWN_ALL_REGIONS {
+    return Intl.message("All Regions", name: 'DROPDOWN_ALL_REGIONS');
+  }
+
+  String get DROPDOWN_ALL_STATUS {
+    return Intl.message("All Status", name: 'DROPDOWN_ALL_STATUS');
+  }
+
+  String LABEL_CASE_NUMER(number) {
+    return Intl.message("PH ${number}", name: 'LABEL_CASE_NUMER', args: [number]);
+  }
+
+  String LABEL_DATE_ADMITTED(date) {
+    return Intl.message("Date Admitted: ${date}", name: 'LABEL_DATE_ADMITTED', args: [date]);
+  }
+
+  String LABEL_HOSPITAL(s) {
+    return Intl.message("Hospital: ${s}", name: 'LABEL_HOSPITAL', args: [s]);
+  }
+
+  String LABEL_AGE(s) {
+    return Intl.message("Age: ${s}", name: 'LABEL_AGE', args: [s]);
+  }
+
+  String LABEL_NATIONALITY(s) {
+    return Intl.message("Nationality: ${s}", name: 'LABEL_NATIONALITY', args: [s]);
+  }
+
+  String LABEL_STATUS(s) {
+    return Intl.message("Status: ${s}", name: 'LABEL_STATUS', args: [s]);
+  }
+
+  String LABEL_REGION_VALUE(s) {
+    return Intl.message("Region: ${s}", name: 'LABEL_REGION_VALUE', args: [s]);
+  }
+
+  String get LABEL_TOTAL_PATIENTS {
+    return Intl.message("Total: ", name: 'LABEL_TOTAL_PATIENTS');
   }
 
 

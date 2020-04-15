@@ -1,5 +1,3 @@
-import 'package:phcovid19tracker/utils/StringUtil.dart';
-
 class PatientDetails {
   int caseNo;
   String date;

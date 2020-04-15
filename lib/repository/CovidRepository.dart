@@ -110,6 +110,8 @@ class CovidRepository implements AbstractCovidRepository {
         }
     );
 
+    print('$API_URL_PHBREAKDOWN$PH_PATIENTS_LIST');
+
     if( NetworkUtils.isResponseSuccess(response) ){
       var data = json.decode(response.body);
       List<PatientDetails> list = [...data.map( (item) => PatientDetails.fromMap(item) )];
