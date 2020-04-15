@@ -10,6 +10,7 @@ import 'package:phcovid19tracker/ui/History/HistoryPageContract.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:phcovid19tracker/utils/DateUtils.dart';
 import 'package:phcovid19tracker/utils/StringUtil.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'HistoryPresenter.dart';
 
@@ -28,10 +29,19 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
 
   final String countryName;
   BuildContext _context;
-  int _initalCountList = 11, _appendCountList = 10, _graphShowCount = 5;
+  int _initalCountList = 11, _appendCountList = 5, _graphShowCount = 5;
 
-  bool _showGraphConfirmed, _showGraphDeaths, _showGraphRecovered, _showGraphNewCases, _showPageLoader, _showListLoader, _isLandscape;
-  List<CountryStats> _list;
+  bool _showGraphConfirmed, _showGraphDeaths, _showGraphRecovered, _showGraphNewCases, _showPageLoader, _isLandscape;
+  List<CountryStats> _list, _originalList;
+  bool _isAscending;
+
+  static const String KEY_DATE = 'date';
+  static const String KEY_CONFIRMED = 'confirmed';
+  static const String KEY_RECOVERED = 'recovered';
+  static const String KEY_DEATHS = 'deaths';
+  static const String KEY_ACTIVE = 'active';
+  static const String KEY_NEW_CASES = 'newCases';
+  static const String KEY_NEW_DEATHS = 'newDeaths';
 
   HistoryPresenter _presenter;
   _HistoryPageState(this.countryName){
@@ -52,9 +62,10 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
     _showGraphRecovered = true;
     _showPageLoader = true;
     _showGraphNewCases = true;
-    _showListLoader = false;
     _isLandscape = false;
+    _isAscending = true;
     _list = [];
+    _originalList = [];
   }
 
   fetchCountryHistory(){
@@ -71,41 +82,6 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
 
   @override
   Widget listLoader(BuildContext context, int index) {
-    if( _showListLoader ){
-      var totalMinusLoaded = (_list.length) - _initalCountList;
-      if( totalMinusLoaded >= _appendCountList ){
-        _initalCountList = _initalCountList + _appendCountList;
-      }else{
-        _initalCountList = _initalCountList + totalMinusLoaded;
-      }
-      
-      Future.delayed(const Duration(milliseconds: 500), () => {
-        setStateWrapper((){ _showListLoader = false; _initalCountList = _initalCountList; })
-      });
-
-      return Container(
-        margin: EdgeInsets.fromLTRB(0, 4.0, 0, 0),
-        child: Center(
-          child: AwesomeLoader( loaderType: AwesomeLoader.AwesomeLoader4, color: Colors.blue, ),
-        ),
-      );
-    }
-
-    if( index < (_list.length)-1 ){
-      return Container(
-        margin: EdgeInsets.fromLTRB(0, 4.0, 0, 0),
-        color: Colors.blue,
-        child: FlatButton(
-            child: Text(S.of(context).LABEL_LOAD_MORE, style: TextStyle(color: Colors.white),),
-            onPressed: () {
-              setStateWrapper((){
-                _showListLoader = true;
-              });
-            },
-        ),
-      ); 
-    }
-
     return Container();
   }
 
@@ -133,9 +109,11 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
 
   @override
   void onLoadStatsComplete(List<CountryStats> item) {
+    _list = [];
     setStateWrapper((){ 
       _showPageLoader = false; 
-      _list = item;
+      _list.addAll(item);
+      _originalList.addAll(item);
     });
   }
 
@@ -149,7 +127,7 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
 
     String dateFormatted;
         (_list).asMap().forEach((index, value) => {
-          (index < (_graphShowCount)) ? {
+          (index < (_graphShowCount) && index != 0 ) ? {
             dateFormatted = DateUtils.formatDateTime("MMM dd", DateUtils.timestampToDateTime(value.recordDate)),
             confirmedData.add(new HistoryGraphData(dateFormatted, StringUtil.stringToInt(value.confirmed))),
             recoveredData.add(new HistoryGraphData(dateFormatted, StringUtil.stringToInt(value.recovered))),
@@ -345,9 +323,32 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
     return new Container(
       child: new ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: _initalCountList,
+        itemCount: 1,
         itemBuilder: (BuildContext context, int index) {
-          return (index == (_initalCountList-1) && !(index == (_list.length - 1)) ) ? listLoader(context, index) : buildHistoryListItem(context, index);
+          return StickyHeader(
+            header: Container(
+              color: Colors.white,
+              alignment: Alignment.centerLeft,
+              child: Container(
+                child: buildListItem(
+                  recordDate: S.of(context).LABEL_RECORD_DATE,
+                  confirmed: S.of(context).LABEL_CONFIRMED,
+                  deaths: S.of(context).LABEL_DEATHS,
+                  recovered: S.of(context).LABEL_RECOVERED,
+                  activeCases: S.of(context).LABEL_ACTIVE_CASES,
+                  newDeaths: S.of(context).LABEL_NEW_DEATHS,
+                  newCases: S.of(context).LABEL_NEW_CASES,
+                  isBold: true,
+                  isClickable: true
+                ),
+              )
+            ),
+            content: Column(
+              children: [
+                for(var i=0; i<_list.length; i++ ) buildHistoryListItem(context, i)
+              ],
+            ),
+          );
         }
       ),
     );
@@ -371,49 +372,117 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageContrac
     );
   }
 
-  Widget buildHistoryListItem(BuildContext context, int index){
-    CountryStats data = _list[index];
+  void sortList({String key}){
+    List<CountryStats> tempList = [];
+    tempList.addAll(_originalList);
+    bool hasChanges = true;
 
-    return  
-      Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 2.0),
-        child: Card(
-          elevation: 5,
-          child: new Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: Text(data.formatRecordDate(), style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),),
-                  ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    buildRecordEntry(S.of(context).LABEL_CONFIRMED, data.confirmed),
-                    buildRecordEntry(S.of(context).LABEL_RECOVERED, data.recovered)
-                  ],
-                ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    buildRecordEntry(S.of(context).LABEL_ACTIVE_CASES, data.activeCases),
-                    buildRecordEntry(S.of(context).LABEL_DEATHS, data.deaths),
-                  ],
-                ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    buildRecordEntry(S.of(context).LABEL_NEW_CASES, data.newCases),
-                    buildRecordEntry(S.of(context).LABEL_NEW_DEATHS, data.newDeaths),
-                  ],
-                )
+    switch(key){
+      case KEY_DATE:
+        tempList = [];
+        (_isAscending) ? tempList.addAll(_originalList) : tempList.addAll(_originalList.reversed);
+        break;
+      case KEY_CONFIRMED:
+        tempList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.confirmed)).compareTo(StringUtil.stringToInt(b.confirmed)) : (StringUtil.stringToInt(b.confirmed)).compareTo(StringUtil.stringToInt(a.confirmed));
+        }); 
+        break;
+      case KEY_RECOVERED:
+        tempList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.recovered)).compareTo(StringUtil.stringToInt(b.recovered)) : (StringUtil.stringToInt(b.recovered)).compareTo(StringUtil.stringToInt(a.recovered));
+        }); 
+        break;
+      case KEY_DEATHS:
+        tempList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.deaths)).compareTo(StringUtil.stringToInt(b.deaths)) : (StringUtil.stringToInt(b.deaths)).compareTo(StringUtil.stringToInt(a.deaths));
+        }); 
+        break;
+      case KEY_ACTIVE:
+        tempList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.activeCases)).compareTo(StringUtil.stringToInt(b.activeCases)) : (StringUtil.stringToInt(b.activeCases)).compareTo(StringUtil.stringToInt(a.activeCases));
+        }); 
+        break;
+      case KEY_NEW_CASES:
+        tempList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.newCases)).compareTo(StringUtil.stringToInt(b.newCases)) : (StringUtil.stringToInt(b.newCases)).compareTo(StringUtil.stringToInt(a.newCases));
+        }); 
+        break;
+      case KEY_NEW_DEATHS:
+        tempList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.newDeaths)).compareTo(StringUtil.stringToInt(b.newDeaths)) : (StringUtil.stringToInt(b.newDeaths)).compareTo(StringUtil.stringToInt(a.newDeaths));
+        }); 
+        break;
+      default:
+        hasChanges = false;
+        break;
+    }
+
+    if( hasChanges ){
+      setStateWrapper((){
+        _list = tempList;
+        _isAscending = !(_isAscending);
+      });
+    }
+  }
+
+  Widget buildListItemDetail({String text, bool isBold = false, int flex = 1, Function onTap, bool isClickable = false }){
+    return Expanded(
+      flex: flex,
+      child: Align(
+        alignment: Alignment.center,
+        child: GestureDetector(
+          onTap: ( isClickable ) ? onTap : () => { },
+          child: Text(text, style: TextStyle(fontWeight: (isBold) ? FontWeight.bold : FontWeight.normal),),
+        ),
+      ),
+    );
+  }
+
+  Widget buildListItem({int index, String recordDate, String confirmed, String activeCases, String recovered, String deaths, String newCases, String newDeaths, bool isBold = false, bool isClickable = false }){
+    List<Widget> landscapeView = [];
+    if( isLandscape() ){
+      landscapeView.add(buildListItemDetail(text: activeCases, isBold: isBold, onTap: () => { sortList(key: KEY_ACTIVE) }, isClickable: isClickable ));
+      landscapeView.add(buildListItemDetail(text: newCases, isBold: isBold, onTap: () => { sortList(key: KEY_NEW_CASES) }, isClickable: isClickable ));
+      landscapeView.add(buildListItemDetail(text: newDeaths, isBold: isBold, onTap: () => { sortList(key: KEY_NEW_DEATHS) }, isClickable: isClickable ));
+    } 
+
+    return Column(
+      children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(10.0, 20.0, 0.0, 10.0),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                buildListItemDetail(text: recordDate, isBold: true, onTap: () => { sortList(key: KEY_DATE) }, isClickable: isClickable),
+                buildListItemDetail(text: confirmed, isBold: isBold, onTap: () => { sortList(key: KEY_CONFIRMED) }, isClickable: isClickable),
+                buildListItemDetail(text: recovered, isBold: isBold, onTap: () => { sortList(key: KEY_RECOVERED) }, isClickable: isClickable),
+                buildListItemDetail(text: deaths, isBold: isBold, onTap: () => { sortList(key: KEY_DEATHS) }, isClickable: isClickable),
+                for( var item in landscapeView ) item
               ],
             ),
+          ),
+          Divider(
+            color: Colors.black,
           )
-        ),
-      );
+      ]
+    );
+  }
+
+  Widget buildHistoryListItem(BuildContext context, int index){
+    CountryStats data = _list[index];
+    return buildListItem(
+      index: index,
+      recordDate: data.formatRecordDate().toString(),
+      confirmed: data.confirmed.toString(),
+      activeCases: data.activeCases.toString(),
+      recovered: data.recovered.toString(),
+      deaths: data.deaths.toString(),
+      newCases: data.newCases.toString(),
+      newDeaths: data.newDeaths.toString(),
+      isBold: false,
+      isClickable: false 
+    );
   }
 
   @override

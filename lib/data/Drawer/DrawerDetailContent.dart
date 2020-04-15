@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class DrawerDetailContent{
   final String accountName;
   final String accountEmail;

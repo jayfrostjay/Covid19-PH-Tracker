@@ -98,8 +98,12 @@ class S {
     return Intl.message("Total Recovered", name: 'LABEL_TOTAL_RECOVERED');
   }
 
-  String LABEL_RECORD_DATE(date) {
-    return Intl.message("Record Date: ${date}", name: 'LABEL_RECORD_DATE', args: [date]);
+  String get LABEL_RECORD_DATE {
+    return Intl.message("Date", name: 'LABEL_RECORD_DATE');
+  }
+
+  String LABEL_RECORD_DATE_VALUE(recordDate) {
+    return Intl.message("Record Date: ${recordDate}", name: 'LABEL_RECORD_DATE_VALUE', args: [recordDate]);
   }
 
   String LABEL_LOCATION(location) {
@@ -135,19 +139,19 @@ class S {
   }
 
   String get LABEL_CONFIRMED {
-    return Intl.message("Confirmed: ", name: 'LABEL_CONFIRMED');
+    return Intl.message("Confirmed", name: 'LABEL_CONFIRMED');
   }
 
   String get LABEL_RECOVERED {
-    return Intl.message("Recovered: ", name: 'LABEL_RECOVERED');
+    return Intl.message("Recovered", name: 'LABEL_RECOVERED');
   }
 
   String get LABEL_DEATHS {
-    return Intl.message("Deaths: ", name: 'LABEL_DEATHS');
+    return Intl.message("Deaths", name: 'LABEL_DEATHS');
   }
 
   String get LABEL_ACTIVE_CASES {
-    return Intl.message("Active Cases: ", name: 'LABEL_ACTIVE_CASES');
+    return Intl.message("Active Cases", name: 'LABEL_ACTIVE_CASES');
   }
 
   String LABEL_RANK_TEMPLATE(rank, name) {
@@ -155,11 +159,11 @@ class S {
   }
 
   String get LABEL_NEW_CASES {
-    return Intl.message("New Cases: ", name: 'LABEL_NEW_CASES');
+    return Intl.message("New Cases", name: 'LABEL_NEW_CASES');
   }
 
   String get LABEL_NEW_DEATHS {
-    return Intl.message("New Deaths: ", name: 'LABEL_NEW_DEATHS');
+    return Intl.message("New Deaths", name: 'LABEL_NEW_DEATHS');
   }
 
   String get LABEL_COVID_HISTORY {
@@ -184,6 +188,14 @@ class S {
 
   String get LABEL_BUTTON_NEW_CASES {
     return Intl.message("New Cases", name: 'LABEL_BUTTON_NEW_CASES');
+  }
+
+  String get LABEL_PH_PATIENT_LIST {
+    return Intl.message("PH Patient List", name: 'LABEL_PH_PATIENT_LIST');
+  }
+
+  String get LABEL_COUNTRY {
+    return Intl.message("Country", name: 'LABEL_COUNTRY');
   }
 
 

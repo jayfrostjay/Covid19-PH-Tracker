@@ -7,4 +7,8 @@ class StringUtil {
     }    
     return 0;
   }
+
+  static String formatGender(String text){
+    return (text.trim().toLowerCase() == 'M') ? 'Male' : 'Female';
+  }
 }

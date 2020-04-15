@@ -14,7 +14,7 @@ import 'package:phcovid19tracker/generated/i18n.dart';
 
 class TrackerPage extends StatefulWidget {
   TrackerPage({Key key}) : super(key: key);
-  _TrackerPageState instance = _TrackerPageState();
+  final _TrackerPageState instance = _TrackerPageState();
 
   @override
   _TrackerPageState createState() => instance;
@@ -231,7 +231,7 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              S.of(context).LABEL_RECORD_DATE(recordDate),
+              S.of(context).LABEL_RECORD_DATE_VALUE(recordDate),
               textAlign: TextAlign.end,
               style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
             ),
@@ -242,7 +242,6 @@ class _TrackerPageState extends State<TrackerPage> implements TrackerPageContrac
 
   @override
   Widget pageLoader() {
-    // TODO: implement pageLoader
     return null;
   }
  
