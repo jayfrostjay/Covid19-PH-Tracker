@@ -11,6 +11,7 @@ import 'package:phcovid19tracker/utils/DateUtils.dart';
 import 'package:phcovid19tracker/utils/StringUtil.dart';
 import 'package:phcovid19tracker/widgets/CustomAppBar.dart';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'WorldStatsPageContract.dart';
 
@@ -25,10 +26,20 @@ class WorldStatsPage extends StatefulWidget {
 class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, WorldStatsPageContract {
   
   BuildContext _context;
-  bool _listLoading, _pageLoading;
+  bool _pageLoading;
   int _listInitalCount, _listAppendCount;
   List<ListViewHolder> _list;
+  List<CountryStats> _rawList;
   WorldStatsPresenter _presenter;
+  bool _isAscending;
+
+  static const String KEY_COUNTRY = 'country';
+  static const String KEY_CONFIRMED = 'confirmed';
+  static const String KEY_RECOVERED = 'recovered';
+  static const String KEY_DEATHS = 'deaths';
+  static const String KEY_ACTIVE = 'active';
+  static const String KEY_NEW_CASES = 'newCases';
+  static const String KEY_NEW_DEATHS = 'newDeaths';
 
   _WorldStatsPageState(){
     _presenter = WorldStatsPresenter(this);
@@ -44,10 +55,11 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
   @override
   void defaultState() {
     _pageLoading = false;
-    _listLoading = false;
     _listInitalCount = 22;
     _listAppendCount = 20;
+    _isAscending = true;
     _list = [];
+    _rawList = [];
   }
 
   fetchWorldStats(){
@@ -60,12 +72,11 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
    @override
   void onLoadStatsComplete(Map<String, dynamic> item) {
     List<ListViewHolder> holder = [];
-    holder.add(ListViewHolder(viewType: ListViewHolderViewType.header, data: DateUtils.formatDateTime("E MMM dd, yyyy - hh:mm:ss a", DateUtils.timestampToDateTime(item["date"]))));
-
+    List<CountryStats> rawHolder = [];
     // order by total cases
     (item["history"]).sort((a, b) => StringUtil.stringToInt(b['cases']).compareTo(StringUtil.stringToInt(a['cases'])));
     (item["history"]).forEach((stat) => {
-      holder.add(ListViewHolder(viewType: ListViewHolderViewType.item, data: stat))
+      holder.add(ListViewHolder(viewType: ListViewHolderViewType.item, data: stat)), rawHolder.add(CountryStats.fromMap(stat))
     });
 
     setStateWrapper((){
@@ -74,6 +85,7 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
         _list = [];
       }else{
         _list = holder;
+        _rawList = rawHolder;
       }
     });
   }
@@ -111,47 +123,10 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
 
   @override
   void progressDialog() {
-    // 
   }
 
   @override
   Widget listLoader(BuildContext context, int index) {
-    if( _listLoading ){
-
-      var totalMinusLoaded = (_list.length) - _listInitalCount;
-      if( totalMinusLoaded >= _listAppendCount ){
-        _listInitalCount = _listInitalCount + _listAppendCount;
-      }else{
-        _listInitalCount = _listInitalCount + totalMinusLoaded;
-      }
-
-      Future.delayed(const Duration(milliseconds: 500), () => { 
-        setStateWrapper(() { _listLoading = false; _listInitalCount = _listInitalCount; }),
-      });
-
-      return Container(
-        margin: EdgeInsets.fromLTRB(0, 4.0, 0, 0),
-        child: Center(
-          child: AwesomeLoader( loaderType: AwesomeLoader.AwesomeLoader4, color: Colors.blue, ),
-        ),
-      );
-    }
-
-    if( index < _list.length ){
-      return Container(
-        margin: EdgeInsets.fromLTRB(0, 4.0, 0, 0),
-        color: Colors.blue,
-        child: FlatButton(
-            child: Text(S.of(context).LABEL_LOAD_MORE, style: TextStyle(color: Colors.white),),
-            onPressed: () {
-              setStateWrapper((){
-                _listLoading = true;
-              }); 
-            },
-        ),
-      );
-    }
-
     return Container();
   }
 
@@ -179,83 +154,73 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
     );
   }
 
-  Widget listDataItemContent(String label, String text){
+  Widget buildListItemDetail({String text, bool isBold, bool isClickable = false, Function onTap, Alignment alignment}){
     return Expanded(
-      child: RichText(
-        textAlign: TextAlign.left,
-        text: TextSpan(
-          children: [
-            TextSpan( text: label, style: TextStyle(color: Colors.black), ),
-            TextSpan( text: text, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), ),
-          ]
+      flex: 1,
+      child: Align(
+        alignment: (alignment != null) ? alignment : Alignment.center,
+        child: GestureDetector(
+          onTap: (isClickable) ? onTap : () => { },
+          child: Text(text, style: (isBold) ? TextStyle(fontWeight: FontWeight.bold) : TextStyle(fontWeight: FontWeight.normal),),
         ),
-      )
+      ),
+    );
+  }
+
+  Widget buildListItemLayout({String country, String confirmed, String recovered, String deaths, String activeCases, String newCases, String newDeaths, bool isBold = false, bool isClickable = false}){
+    List<Widget> landscapeView = [];
+
+    if( isLandscape() ){
+      landscapeView.add(
+        buildListItemDetail(text: activeCases, isBold: isBold, onTap: () => { sortList(key: KEY_ACTIVE) }, isClickable: isClickable)
+      );
+      landscapeView.add(
+        buildListItemDetail(text: newCases, isBold: isBold, onTap: () => { sortList(key: KEY_NEW_CASES) }, isClickable: isClickable)
+      );
+      landscapeView.add(
+        buildListItemDetail(text: newDeaths, isBold: isBold, onTap: () => { sortList(key: KEY_NEW_DEATHS) }, isClickable: isClickable)
+      );
+    }
+
+    return Column(
+      children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(10.0, 20.0, 0.0, 10.0),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                buildListItemDetail(text: country, isBold: true, onTap: () => { sortList(key: KEY_COUNTRY) }, isClickable: isClickable, alignment: Alignment.centerLeft),
+                buildListItemDetail(text: confirmed, isBold: isBold, onTap: () => { sortList(key: KEY_CONFIRMED) }, isClickable: isClickable),
+                buildListItemDetail(text: recovered, isBold: isBold, onTap: () => { sortList(key: KEY_RECOVERED) }, isClickable: isClickable),
+                buildListItemDetail(text: deaths, isBold: isBold, onTap: () => { sortList(key: KEY_DEATHS) }, isClickable: isClickable),
+                for( var item in landscapeView ) item
+              ],
+            ),
+          ),
+          Divider(
+            color: Colors.black,
+          )
+      ]
     );
   }
 
   Widget buldListItem(BuildContext context, int index){
-    var listViewTemplate;
-
-    if( _list[index].viewType == ListViewHolderViewType.header ){
-      listViewTemplate = Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          S.of(context).LABEL_RECORD_DATE(_list[index].data),
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-      );
-    } else if( _list[index].viewType == ListViewHolderViewType.item ){
-      CountryStats item =  CountryStats.fromMap(_list[index].data);
-      bool isPH = (item.countryName == FlutterConfig.get('API_COUNTRY_KEY'));
-
-      listViewTemplate = 
-        Card(
-          elevation: 5,
-          child: InkWell(
-            onTap: () {
-              _navigateToHistoryScreen(context, item.countryName);
-            },
-            child: Padding(
-            padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  listDataItemHeader(index, item.countryName, isPH),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      listDataItemContent(S.of(context).LABEL_CONFIRMED, item.confirmed),
-                      listDataItemContent(S.of(context).LABEL_RECOVERED, item.recovered),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      listDataItemContent(S.of(context).LABEL_ACTIVE_CASES, item.activeCases),
-                      listDataItemContent(S.of(context).LABEL_DEATHS, item.deaths),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      listDataItemContent(S.of(context).LABEL_NEW_CASES, item.newCases),
-                      listDataItemContent(S.of(context).LABEL_NEW_DEATHS, item.newDeaths),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-      );
+    CountryStats item;
+    if( (_list[index].data) is CountryStats ){
+      item =  (_list[index].data);
+    }else{
+      item =  CountryStats.fromMap(_list[index].data);
     }
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-      child: listViewTemplate,
+    return buildListItemLayout(
+      country: "${index+1}. ${item.countryName}",
+      confirmed: item.confirmed,
+      recovered: item.recovered,
+      deaths: item.deaths,
+      activeCases: item.activeCases,
+      newCases: item.newCases,
+      newDeaths: item.newDeaths
     );
   }
 
@@ -269,11 +234,90 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
     }else{
       return ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: _listInitalCount,
+        itemCount: 1,
         itemBuilder: (BuildContext context, int index) {
-          return (index == (_listInitalCount-1) && !(index == (_list.length - 1)) ) ? listLoader(context, index) : buldListItem(context, index);
+          return StickyHeader(
+            header: Container(
+              color: Colors.white,
+              alignment: Alignment.centerRight,
+              child: Container(
+                child: buildListItemLayout(
+                  country: S.of(context).LABEL_COUNTRY,
+                  confirmed: S.of(context).LABEL_CONFIRMED,
+                  recovered: S.of(context).LABEL_RECOVERED,
+                  deaths: S.of(context).LABEL_DEATHS,
+                  activeCases: S.of(context).LABEL_ACTIVE_CASES,
+                  newCases: S.of(context).LABEL_NEW_CASES,
+                  newDeaths: S.of(context).LABEL_NEW_DEATHS,
+                  isBold: true,
+                  isClickable : true,
+                ),
+              )
+            ),
+            content: Column(
+              children: [
+                for(var i=0; i<_list.length; i++ ) buldListItem(context, i)
+              ],
+            ),
+          );
         }
       );
+    }
+  }
+
+  void sortList({ String key }){
+    List<ListViewHolder> tempList = [];
+    bool hasChanges = true;
+    switch(key){
+      case KEY_COUNTRY:
+        _rawList.sort((a, b){
+          return (_isAscending) ? (a.countryName.toLowerCase()).compareTo(b.countryName.toLowerCase()) : (b.countryName.toLowerCase()).compareTo(a.countryName.toLowerCase());
+        }); 
+        break;
+      case KEY_CONFIRMED:
+        _rawList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.confirmed)).compareTo(StringUtil.stringToInt(b.confirmed)) : (StringUtil.stringToInt(b.confirmed)).compareTo(StringUtil.stringToInt(a.confirmed));
+        }); 
+        break;
+      case KEY_DEATHS:
+        _rawList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.deaths)).compareTo(StringUtil.stringToInt(b.deaths)) : (StringUtil.stringToInt(b.deaths)).compareTo(StringUtil.stringToInt(a.deaths));
+        }); 
+        break;
+      case KEY_RECOVERED:
+        _rawList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.recovered)).compareTo(StringUtil.stringToInt(b.recovered)) : (StringUtil.stringToInt(b.recovered)).compareTo(StringUtil.stringToInt(a.recovered));
+        }); 
+        break;
+      case KEY_ACTIVE:
+        _rawList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.activeCases)).compareTo(StringUtil.stringToInt(b.activeCases)) : (StringUtil.stringToInt(b.activeCases)).compareTo(StringUtil.stringToInt(a.activeCases));
+        }); 
+        break;
+      case KEY_NEW_CASES:
+        _rawList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.newCases)).compareTo(StringUtil.stringToInt(b.newCases)) : (StringUtil.stringToInt(b.newCases)).compareTo(StringUtil.stringToInt(a.newCases));
+        }); 
+        break;
+      case KEY_NEW_DEATHS:
+        _rawList.sort((a, b){
+          return (_isAscending) ? (StringUtil.stringToInt(a.newDeaths)).compareTo(StringUtil.stringToInt(b.newDeaths)) : (StringUtil.stringToInt(b.newDeaths)).compareTo(StringUtil.stringToInt(a.newDeaths));
+        }); 
+        break;
+      default:
+        hasChanges = false;
+        break;
+    }
+
+    _rawList.forEach((element) {
+      tempList.add(new ListViewHolder(viewType: ListViewHolderViewType.item, data: element));
+    });
+    
+    if( hasChanges ){
+      setStateWrapper((){
+        _list = tempList;
+        _isAscending = !(_isAscending);
+      });
     }
   }
 

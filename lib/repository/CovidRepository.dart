@@ -1,5 +1,6 @@
 import 'package:phcovid19tracker/data/CountryStats.dart';
 import 'package:phcovid19tracker/data/LatestCountryStats.dart';
+import 'package:phcovid19tracker/data/PatientDetails.dart';
 import 'package:phcovid19tracker/repository/APIException.dart';
 import 'package:phcovid19tracker/repository/AbstractCovidRepository.dart';
 import 'dart:async';
@@ -15,9 +16,13 @@ class CovidRepository implements AbstractCovidRepository {
   var HEADER_API_KEY = FlutterConfig.get('API_KEY');
   var HEADER_API_URL = FlutterConfig.get('API_URL'); 
 
+  var API_URL_PHBREAKDOWN = FlutterConfig.get('API_BASE_URL_PHBREAKDOWN');
+
   static const LATEST_STATS = "latest_stat_by_country.php";
   static const HISTORY_BY_COUNTRY = "cases_by_particular_country.php";
   static const WORLD_STATS = "cases_by_country.php";
+
+  static const PH_PATIENTS_LIST = "cases";
 
   static Future<http.Response> requestWrapper({String url, Map<String, String> headers}){
     return http.get(
@@ -93,6 +98,26 @@ class CovidRepository implements AbstractCovidRepository {
       return returnData;
     } else{
       throw new APIException("Error: [Function:fetchWorldLatestStats] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
+    }
+  }
+
+  @override
+  Future<List<PatientDetails>> fetchPatientsCases() async {
+    final response = await requestWrapper(
+        url: '$API_URL_PHBREAKDOWN$PH_PATIENTS_LIST',
+        headers:  {
+        "Accept" : "application/json",
+        }
+    );
+
+    print('$API_URL_PHBREAKDOWN$PH_PATIENTS_LIST');
+
+    if( NetworkUtils.isResponseSuccess(response) ){
+      var data = json.decode(response.body);
+      List<PatientDetails> list = [...data.map( (item) => PatientDetails.fromMap(item) )];
+      return list;
+    }else{
+      throw new APIException("Error: [Function:fetchPatientsCases] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
     }
   }  
 }

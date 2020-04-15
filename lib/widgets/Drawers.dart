@@ -59,6 +59,9 @@ class CustomDrawers extends StatelessWidget {
             content: DrawerListTileContent(Icon(Icons.history), S.of(context).LABEL_LINKS_PH_HISTORY, () => { Navigator.of(context).pushNamed("/countryHistory") })
           ),
           buildDrawerItem(
+            content: DrawerListTileContent(Icon(Icons.list), S.of(context).LABEL_PH_PATIENT_LIST, () => { Navigator.of(context).pushNamed("/phPatientList") })
+          ),
+          buildDrawerItem(
             content: DrawerListTileContent(Icon(FontAwesomeIcons.chartLine), S.of(context).LABEL_LINKS_WORLD_STATS, () => { Navigator.of(context).pushNamed("/worldStats") })
           ),
           buildDrawerItem(

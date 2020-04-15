@@ -6,12 +6,15 @@
     "LABEL_VERSION" : "Version ${version}",
     "LABEL_FLUTTER" : "Flutter",
     "LABEL_DEVELOPED_USING" : "Developed using ",
-    "LABEL_DATA_FROM" : " Data from ",
+    "LABEL_DATA_FROM" : " Data from: ",
     "LABEL_RAPID_API" : "RapidAPI", 
     "LABEL_COPYRIGHTS" : "Copyright 2020. All rights reseved.",
 
     "URL_FLUTTER" : "https://flutter.dev",
     "URL_RAPID_API" : "https://rapidapi.com/astsiatsko/api/coronavirus-monitor",
+
+    "LABEL_HEROKU_API" : "Coronavirus-PH", 
+    "URL_HEROKU_API" : "https://coronavirus-ph-api.herokuapp.com/",
 
     "LABEL_PULL_SERVER_DATA" : "Pulling Data from Server...",
     "LABEL_ERROR_FETCHING_DATA" : "Error fetching data... [${error}]",
@@ -19,7 +22,8 @@
     "LABEL_TOTAL_ACTIVE_CASES" : "Active Cases",
     "LABEL_TOTAL_DEATHS" : "Total Deaths",
     "LABEL_TOTAL_RECOVERED" : "Total Recovered",
-    "LABEL_RECORD_DATE" : "Record Date: ${date}",
+    "LABEL_RECORD_DATE" : "Date",
+    "LABEL_RECORD_DATE_VALUE" : "Record Date: ${recordDate}",
     "LABEL_LOCATION" : "Location: ${location}",
     "LABEL_NEW_RECORD" : "+${count} new",
 
@@ -31,18 +35,33 @@
     "LABEL_NO_AVAILABLE_DATA" : "No available data to be displayed.",
     "LABEL_LOAD_MORE" : "Load More...",
 
-    "LABEL_CONFIRMED" : "Confirmed: ",
-    "LABEL_RECOVERED" : "Recovered: ",
-    "LABEL_DEATHS" : "Deaths: ",
-    "LABEL_ACTIVE_CASES" : "Active Cases: ",
+    "LABEL_CONFIRMED" : "Confirmed",
+    "LABEL_RECOVERED" : "Recovered",
+    "LABEL_DEATHS" : "Deaths",
+    "LABEL_ACTIVE_CASES" : "Active Cases",
     "LABEL_RANK_TEMPLATE" : "${rank}. ${name}",
-    "LABEL_NEW_CASES" : "New Cases: ",
-    "LABEL_NEW_DEATHS" : "New Deaths: ",
+    "LABEL_NEW_CASES" : "New Cases",
+    "LABEL_NEW_DEATHS" : "New Deaths",
     "LABEL_COVID_HISTORY" : "Covid History",
     "LABEL_COUNTRY_COVID_HISTORY" : "Statistics for Covid-19 (${country})",
 
     "LABEL_BUTTON_CONFIRMED" : "Confirmed",
     "LABEL_BUTTON_RECOVERED" : "Recovered",
     "LABEL_BUTTON_DEATHS" : "Deaths",
-    "LABEL_BUTTON_NEW_CASES" : "New Cases"
+    "LABEL_BUTTON_NEW_CASES" : "New Cases",
+
+    "LABEL_PH_PATIENT_LIST" : "PH Patient List",
+    "LABEL_COUNTRY" : "Country",
+
+    "DROPDOWN_ALL_REGIONS" : "All Regions",
+    "DROPDOWN_ALL_STATUS" : "All Status",
+
+    "LABEL_CASE_NUMER" : "PH ${number}",
+    "LABEL_DATE_ADMITTED" : "Date Admitted: ${date}",
+    "LABEL_HOSPITAL" : "Hospital: ${s}",
+    "LABEL_AGE" : "Age: ${s}",
+    "LABEL_NATIONALITY" : "Nationality: ${s}",
+    "LABEL_STATUS" : "Status: ${s}",
+    "LABEL_REGION_VALUE" : "Region: ${s}",
+    "LABEL_TOTAL_PATIENTS" : "Total: "
 }

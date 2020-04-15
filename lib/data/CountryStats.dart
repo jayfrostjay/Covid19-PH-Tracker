@@ -37,7 +37,7 @@ class CountryStats {
   }
 
   String formatRecordDate() {
-    String formattedRecordDate = DateUtils.formatDateTime("E MMM dd, yyyy", DateUtils.timestampToDateTime(this.recordDate));
+    String formattedRecordDate = DateUtils.formatDateTime("E MMM dd", DateUtils.timestampToDateTime(this.recordDate));
     this.formattedRecordDate = formattedRecordDate;
     return this.formattedRecordDate;
   }

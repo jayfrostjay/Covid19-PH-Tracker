@@ -12,7 +12,7 @@ class TrackerPresenter {
 
   void loadCountryStats(String countryName) {
     assert(_view != null);
-    
+
     _repository
       .fetchCountryLatestStats(countryName)
       .then((items) => _view.onLoadStatsComplete(items))

@@ -10,20 +10,40 @@ class AboutPage extends StatelessWidget {
 
   @protected
   Widget buildReferenceDataView(BuildContext context){
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          FaIcon(FontAwesomeIcons.link),
-          RichText(
-            text: TextSpan(text: S.of(context).LABEL_DATA_FROM, style: TextStyle(color: Colors.black, fontSize: 16.0), )
+    return Column(
+      children: [
+        Text(S.of(context).LABEL_DATA_FROM, style: TextStyle(color: Colors.black, fontSize: 16.0)),
+        Container(
+          padding: EdgeInsets.fromLTRB(0, 8.0, 0, 4.0),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // FaIcon(FontAwesomeIcons.infoCircle),
+                RichText(
+                  text: TextSpan(text: S.of(context).LABEL_RAPID_API, style: TextStyle(color: Colors.black, fontSize: 16.0, decoration: TextDecoration.underline),
+                  recognizer: TapGestureRecognizer()
+                      ..onTap = () { launch(S.of(context).URL_RAPID_API); }
+                  )
+                ),
+              ],
           ),
-          RichText(
-            text: TextSpan(text: S.of(context).LABEL_RAPID_API, style: TextStyle(color: Colors.black, fontSize: 16.0, decoration: TextDecoration.underline),
-            recognizer: TapGestureRecognizer()
-                ..onTap = () { launch(S.of(context).URL_RAPID_API); }
-            )
-          ) 
-        ],
+        ),
+        Container(
+          padding: EdgeInsets.fromLTRB(0, 4.0, 0, 8.0),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // FaIcon(FontAwesomeIcons.infoCircle),
+                RichText(
+                  text: TextSpan(text: S.of(context).LABEL_HEROKU_API, style: TextStyle(color: Colors.black, fontSize: 16.0, decoration: TextDecoration.underline),
+                  recognizer: TapGestureRecognizer()
+                      ..onTap = () { launch(S.of(context).URL_HEROKU_API); }
+                  )
+                ),
+              ],
+          ),
+        )
+      ],
     );
   }
 
@@ -91,7 +111,7 @@ class AboutPage extends StatelessWidget {
         children: <Widget>[
             buildAvatarAndDetails(context),
             Padding(
-              padding: EdgeInsets.fromLTRB(0, 50.0, 0, 0),
+              padding: EdgeInsets.fromLTRB(0, 50.0, 0, 50.0),
               child: buildReferenceDataView(context),
             ),
             Padding(
