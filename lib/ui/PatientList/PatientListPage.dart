@@ -328,6 +328,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
                   icon: FaIcon(FontAwesomeIcons.search),
                   onPressed: () {
                     updateListByFilters();
+                    FocusScope.of(context).requestFocus(FocusNode());
                   },
                 )
               )
