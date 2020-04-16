@@ -13,6 +13,8 @@ class StringUtil {
   }
 
   static bool itemContainsString(String haystack, String needle){
+    haystack = (haystack != null) ? haystack : ""; 
+    needle = (needle != null) ? needle : ""; 
     return (haystack.toString().trim().toLowerCase()).contains(needle.toString().trim().toLowerCase());
   }
 }

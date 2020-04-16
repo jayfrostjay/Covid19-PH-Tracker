@@ -70,6 +70,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
     _showListLoader = false;
     _dropDownStatusValue = 0;
     _dropdownLocationValue = 0;
+    _searchTextValue = "";
 
     Future.delayed(Duration.zero, () {
       setStateWrapper((){
