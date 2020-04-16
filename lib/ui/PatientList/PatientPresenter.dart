@@ -3,7 +3,6 @@ import 'package:phcovid19tracker/data/DropdownValue.dart';
 import 'package:phcovid19tracker/di/DependencyInjectors.dart';
 import 'package:phcovid19tracker/repository/CovidRepository.dart';
 import 'package:phcovid19tracker/ui/PatientList/PatientListContract.dart';
-import 'package:phcovid19tracker/generated/i18n.dart';
 
 class PatientListPresenter implements LocationPermissions {
   PatientListContract _view;
@@ -11,6 +10,12 @@ class PatientListPresenter implements LocationPermissions {
 
   static const KEY_REGION = "region";
   static const KEY_STATUS = "status";
+  static const KEY_KEYWORD = "keyword";
+  static const KEY_DATE_ADMITTED = "date_admitted";
+  static const KEY_HOSPITAL = "hospital";
+  static const KEY_AGE = "age";
+  static const KEY_NATIONALITY = "nationality";
+  static const KEY_NAME = "name";
 
   PatientListPresenter(this._view){
     _repository = DependencyInjectors().covidRepository;

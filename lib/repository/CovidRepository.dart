@@ -43,8 +43,12 @@ class CovidRepository implements AbstractCovidRepository {
     );
     
     if( NetworkUtils.isResponseSuccess(response) ){
-      var data = json.decode(response.body);
-      return new LatestCountryStats.fromMap(data["latest_stat_by_country"][0]);
+      try {
+        var data = json.decode(response.body);
+        return new LatestCountryStats.fromMap(data["latest_stat_by_country"][0]);
+      }catch(e){
+        throw new APIException("Error: [Function:fetchCountryLatestStats] [Error:$e]");
+      }
     } else{
       throw new APIException("Error: [Function:fetchCountryLatestStats] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
     }
@@ -62,11 +66,15 @@ class CovidRepository implements AbstractCovidRepository {
     );
 
     if( NetworkUtils.isResponseSuccess(response) ){
-      var data = json.decode(response.body);
-      return {
-        "date" :  data["statistic_taken_at"],
-        "history" : data["countries_stat"]
-      };
+      try {
+        var data = json.decode(response.body);
+        return {
+          "date" :  data["statistic_taken_at"],
+          "history" : data["countries_stat"]
+        };
+      }catch(e){
+        throw new APIException("Error: [Function:fetchWorldLatestStats] [Error:$e]");
+      }
     } else{
       throw new APIException("Error: [Function:fetchWorldLatestStats] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
     }
@@ -83,19 +91,23 @@ class CovidRepository implements AbstractCovidRepository {
       }
     );
     if( NetworkUtils.isResponseSuccess(response) ){
-      var data = json.decode(response.body);
-      var history = data["stat_by_country"].reversed.toList();
-      List<String> dateList = [];
-      List<CountryStats> returnData = [];
+      try {
+        var data = json.decode(response.body);
+        var history = data["stat_by_country"].reversed.toList();
+        List<String> dateList = [];
+        List<CountryStats> returnData = [];
 
-      history.forEach((item){
-        String formattedDate = DateUtils.formatDateTime("yyyy-MM-dd", DateUtils.timestampToDateTime(item["record_date"])); 
-        if( !dateList.contains(formattedDate) ){
-          dateList.add(formattedDate);
-          returnData.add(new CountryStats.fromMap(item));
-        }
-      });
-      return returnData;
+        history.forEach((item){
+          String formattedDate = DateUtils.formatDateTime("yyyy-MM-dd", DateUtils.timestampToDateTime(item["record_date"])); 
+          if( !dateList.contains(formattedDate) ){
+            dateList.add(formattedDate);
+            returnData.add(new CountryStats.fromMap(item));
+          }
+        });
+        return returnData;
+      }catch(e){
+        throw new APIException("Error: [Function:fetchCountryHistory] [Error:$e]");
+      }
     } else{
       throw new APIException("Error: [Function:fetchWorldLatestStats] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
     }
@@ -110,12 +122,14 @@ class CovidRepository implements AbstractCovidRepository {
         }
     );
 
-    print('$API_URL_PHBREAKDOWN$PH_PATIENTS_LIST');
-
     if( NetworkUtils.isResponseSuccess(response) ){
-      var data = json.decode(response.body);
-      List<PatientDetails> list = [...data.map( (item) => PatientDetails.fromMap(item) )];
-      return list;
+      try{
+        var data = json.decode(response.body);
+        List<PatientDetails> list = [...data.map( (item) => PatientDetails.fromMap(item) )];
+        return list;
+      }catch(e){
+        throw new APIException("Error: [Function:fetchPatientsCases] [Error:$e]");
+      }
     }else{
       throw new APIException("Error: [Function:fetchPatientsCases] [StatusCode:${response.statusCode}] [Error:${response.reasonPhrase}]");
     }
