@@ -32,6 +32,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
   List<DropdownValue> _regionDropdown, _statusDropdown;
   List<PatientDetails> _dataList;
   List<PatientDetails> _originalDataList;
+  String _searchTextValue;
 
   final String GENDER_FEMALE = "F";
   final String GENDER_MALE = "M";
@@ -170,46 +171,93 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
     return list[index].label;
   }
 
-  void updateListByFilters({String key}){
-    bool hasChanges = true;
-    List<PatientDetails> newList = [];
-    
+  List<PatientDetails> getFilteredPatientList({List<PatientDetails> list, String key, String text, int index = 0}){
+    List<PatientDetails> output = [];
+
+    list.asMap().forEach((listIndex, value) { 
+      switch(key){
+        case PatientListPresenter.KEY_KEYWORD:
+          String dateAdmitted = DateUtils.tryParse(value.date);
+          if( dateAdmitted == "false" ){
+            dateAdmitted = value.date;
+          }else{
+            dateAdmitted = DateUtils.formatDateTime("E MMM dd, yyyy", DateTime.parse(dateAdmitted));
+          }
+
+          if( StringUtil.itemContainsString(value.hospitalAdmitted, text) ||
+              StringUtil.itemContainsString(value.age, text) ||
+              StringUtil.itemContainsString(value.nationality, text) ||
+              StringUtil.itemContainsString(value.region, text) ||
+              StringUtil.itemContainsString(value.status, text) ||
+              StringUtil.itemContainsString(value.caseNo.toString(), text) ||
+              StringUtil.itemContainsString(dateAdmitted, text) ){
+              output.add(value);
+          }
+          break;
+        case PatientListPresenter.KEY_DATE_ADMITTED:
+          break;
+        case PatientListPresenter.KEY_NAME:
+          break;
+        case PatientListPresenter.KEY_HOSPITAL:
+          if( (value.hospitalAdmitted.trim().toLowerCase()).contains(text.trim().toLowerCase()) ){
+            output.add(value);
+          }
+          break;
+        case PatientListPresenter.KEY_AGE:
+          if( (value.age.trim().toLowerCase()).contains(text.trim().toLowerCase()) ){
+            output.add(value);
+          }
+          break;
+        case PatientListPresenter.KEY_NATIONALITY:
+          if( (value.nationality.trim().toLowerCase()).contains(text.trim().toLowerCase()) ){
+            output.add(value);
+          }
+          break;
+        case PatientListPresenter.KEY_REGION:
+          if( index == 0 ){
+            output.add(value);
+          }else if( (value.region.trim().toLowerCase()) == text.trim().toLowerCase() ){
+            output.add(value);
+          }
+          break;
+        case PatientListPresenter.KEY_STATUS:
+          if( index == 0 ){
+            output.add(value);
+          }else if( (value.status.trim().toLowerCase()) == text.trim().toLowerCase() ){
+            output.add(value);
+          }
+          break;
+        default:
+          output.add(value);
+          break;
+      }
+    });
+    return output;
+  }
+
+  void updateListByFilters(){
+    List<PatientDetails> holder = _originalDataList;
     if( _dropDownStatusValue == 0 && _dropdownLocationValue == 0 ){
       setStateWrapper((){
         _dataList = _originalDataList;
       });
-      hasChanges = false;
     }else{
       String status = getTextValueDropdown(list: _statusDropdown, index: _dropDownStatusValue);
       String region = getTextValueDropdown(list: _regionDropdown, index: _dropdownLocationValue);
-
-      List<PatientDetails> holder = [];
-      _originalDataList.asMap().forEach((index, value) { 
-        if( (value.status.trim().toLowerCase()) == status.trim().toLowerCase() ){
-          holder.add(value);
-        }
-      });
-
-      if( _dropDownStatusValue == 0 ){
-        holder.addAll(_originalDataList);
-      }
-
-      holder.asMap().forEach((index, value) { 
-        if( (value.region.trim().toLowerCase()) == region.trim().toLowerCase() && _dropdownLocationValue != 0 ){
-          newList.add(value);
-        }
-      });
-
-      if( _dropdownLocationValue == 0 ){
-        newList.addAll(holder);
-      }
+      
+      holder = getFilteredPatientList(list: holder, key: PatientListPresenter.KEY_STATUS, text: status, index: _dropDownStatusValue);
+      holder = getFilteredPatientList(list: holder, key: PatientListPresenter.KEY_REGION, text: region, index: _dropdownLocationValue);
     }
 
-    if( hasChanges ){
-      setStateWrapper((){
-        _dataList = newList;
-      });
+    if( _searchTextValue.trim() != "" ){
+      String value = _searchTextValue.trim();
+      holder = getFilteredPatientList(list: holder, key: PatientListPresenter.KEY_KEYWORD, text: value);
+      FocusScope.of(context).requestFocus(FocusNode());
     }
+
+    setStateWrapper((){
+      _dataList = holder;
+    });
   }
 
   Widget dropdownFilterTemplate({List<DropdownValue> items, String hint, String key}){
@@ -237,13 +285,13 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
               setStateWrapper((){
                 _dropDownStatusValue = index;
               });
-              updateListByFilters(key: PatientListPresenter.KEY_STATUS);
+              updateListByFilters();
               break;
             case PatientListPresenter.KEY_REGION:
               setStateWrapper((){
                 _dropdownLocationValue = index;
               });
-              updateListByFilters(key: PatientListPresenter.KEY_REGION);
+              updateListByFilters();
               break;
           }
         },
@@ -252,25 +300,60 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
   }
 
   Widget dropdownFilter(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Column(
       children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            padding: EdgeInsets.all(8.0),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan( text: S.of(context).LABEL_TOTAL_PATIENTS, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black) ),
-                  TextSpan( text: _dataList.length.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black) ),
-                ]
+        Row(
+          children: [
+            Expanded(
+              flex: 5,
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: S.of(context).LABEL_SEARCH_KEYWORD
+                  ),
+                  onChanged: (String text) {
+                    setStateWrapper(() {
+                      _searchTextValue = text;
+                    });
+                  },
+                )
+              )
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                child: IconButton(
+                  icon: FaIcon(FontAwesomeIcons.search),
+                  onPressed: () {
+                    updateListByFilters();
+                  },
+                )
+              )
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan( text: S.of(context).LABEL_TOTAL_PATIENTS, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black) ),
+                      TextSpan( text: _dataList.length.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black) ),
+                    ]
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        dropdownFilterTemplate(items: _statusDropdown, hint: S.of(context).DROPDOWN_ALL_STATUS, key: PatientListPresenter.KEY_STATUS),
-        dropdownFilterTemplate(items: _regionDropdown, hint: S.of(context).DROPDOWN_ALL_REGIONS, key: PatientListPresenter.KEY_REGION)
+            dropdownFilterTemplate(items: _statusDropdown, hint: S.of(context).DROPDOWN_ALL_STATUS, key: PatientListPresenter.KEY_STATUS),
+            dropdownFilterTemplate(items: _regionDropdown, hint: S.of(context).DROPDOWN_ALL_REGIONS, key: PatientListPresenter.KEY_REGION)
+          ],
+        )
       ],
     );
   }
@@ -319,13 +402,11 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
       icon = Icon(FontAwesomeIcons.male, color: Colors.black, size: 50.0);
     }
 
-    print(item.date);
     String dateAdmitted = DateUtils.tryParse(item.date);
-    print(dateAdmitted);
     if( dateAdmitted == "false" ){
       dateAdmitted = item.date;
     }else{
-      dateAdmitted = DateUtils.formatDateTime("E MM dd, yyyy", DateTime.parse(dateAdmitted));
+      dateAdmitted = DateUtils.formatDateTime("E MMM dd, yyyy", DateTime.parse(dateAdmitted));
     }
 
     return Card(

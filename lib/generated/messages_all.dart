@@ -68,6 +68,7 @@ class $en extends MessageLookupByLibrary {
 		"LABEL_STATUS" : (s) => "Status: ${s}",
 		"LABEL_REGION_VALUE" : (s) => "Region: ${s}",
 		"LABEL_TOTAL_PATIENTS" : MessageLookupByLibrary.simpleMessage("Total: "),
+		"LABEL_SEARCH_KEYWORD" : MessageLookupByLibrary.simpleMessage("Search Keyword"),
 
   };
 }

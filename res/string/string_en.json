@@ -63,5 +63,7 @@
     "LABEL_NATIONALITY" : "Nationality: ${s}",
     "LABEL_STATUS" : "Status: ${s}",
     "LABEL_REGION_VALUE" : "Region: ${s}",
-    "LABEL_TOTAL_PATIENTS" : "Total: "
+    "LABEL_TOTAL_PATIENTS" : "Total: ",
+
+    "LABEL_SEARCH_KEYWORD" : "Search Keyword"
 }

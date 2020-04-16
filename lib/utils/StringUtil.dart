@@ -11,4 +11,8 @@ class StringUtil {
   static String formatGender(String text){
     return (text.trim().toLowerCase() == 'M') ? 'Male' : 'Female';
   }
+
+  static bool itemContainsString(String haystack, String needle){
+    return (haystack.toString().trim().toLowerCase()).contains(needle.toString().trim().toLowerCase());
+  }
 }

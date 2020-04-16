@@ -246,6 +246,10 @@ class S {
     return Intl.message("Total: ", name: 'LABEL_TOTAL_PATIENTS');
   }
 
+  String get LABEL_SEARCH_KEYWORD {
+    return Intl.message("Search Keyword", name: 'LABEL_SEARCH_KEYWORD');
+  }
+
 
 }
 
