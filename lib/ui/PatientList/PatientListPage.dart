@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:awesome_loader/awesome_loader.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -33,6 +36,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
   List<PatientDetails> _dataList;
   List<PatientDetails> _originalDataList;
   String _searchTextValue;
+  String _filterTextValue;
 
   final String GENDER_FEMALE = "F";
   final String GENDER_MALE = "M";
@@ -71,6 +75,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
     _dropDownStatusValue = 0;
     _dropdownLocationValue = 0;
     _searchTextValue = "";
+    _filterTextValue = "";
 
     Future.delayed(Duration.zero, () {
       setStateWrapper((){
@@ -80,6 +85,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
         _regionDropdown = [
           createDefaultDropdownValue(index: 0, text: S.of(context).DROPDOWN_ALL_REGIONS)
         ];
+        buildFilterText();
       });
     });
   }
@@ -259,6 +265,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
     setStateWrapper((){
       _dataList = holder;
     });
+    buildFilterText();
   }
 
   Widget dropdownFilterTemplate({List<DropdownValue> items, String hint, String key}){
@@ -272,11 +279,12 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
     return Container(
       padding: EdgeInsets.all(10.0),
       child: DropdownButton<int>(
+        isExpanded: true,
         hint: Text(hint),
         items: items.map((DropdownValue value) {
           return DropdownMenuItem<int>(
             value: value.index,
-            child: new Text(value.label),
+            child: new Text( value.label.trim() ),
           );
         }).toList(),
         value: currentValue,
@@ -336,12 +344,28 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
           ],
         ),
         Row(
+          children: [
+            Expanded(
+              flex: 7,
+              child: dropdownFilterTemplate(items: _statusDropdown, hint: S.of(context).DROPDOWN_ALL_STATUS, key: PatientListPresenter.KEY_STATUS),
+            )
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              flex: 7,
+              child: dropdownFilterTemplate(items: _regionDropdown, hint: S.of(context).DROPDOWN_ALL_REGIONS, key: PatientListPresenter.KEY_REGION),
+            )
+          ],
+        ),
+        Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
               flex: 1,
               child: Container(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 16.0),
                 child: RichText(
                   text: TextSpan(
                     children: [
@@ -352,12 +376,32 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
                 ),
               ),
             ),
-            dropdownFilterTemplate(items: _statusDropdown, hint: S.of(context).DROPDOWN_ALL_STATUS, key: PatientListPresenter.KEY_STATUS),
-            dropdownFilterTemplate(items: _regionDropdown, hint: S.of(context).DROPDOWN_ALL_REGIONS, key: PatientListPresenter.KEY_REGION)
           ],
-        )
+        ),
       ],
     );
+  }
+
+  buildFilterText(){
+    var text = S.of(context).LABEL_SEARCH_FILTERS;
+    String status = getTextValueDropdown(list: _statusDropdown, index: _dropDownStatusValue);
+    String region = getTextValueDropdown(list: _regionDropdown, index: _dropdownLocationValue);
+    
+    if( _searchTextValue.trim() != "" ){
+      text += "[" + _searchTextValue.trim() + "], ";
+    }
+
+    if( status.trim() != "" ){
+      text += "[" + status.trim() + "], ";
+    }
+
+    if( region.trim() != "" ){
+      text += "[" + region.trim() + "]";
+    }
+
+    setStateWrapper((){
+      _filterTextValue = text;
+    });
   }
 
   Widget patientListContent(){
@@ -369,7 +413,27 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            dropdownFilter(), 
+            Container(
+              padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  child: ExpandableTheme(
+                    data: ExpandableThemeData(
+                        iconColor: Colors.blue, 
+                        animationDuration: const Duration(milliseconds: 200)
+                    ),
+                    child: ExpandablePanel(
+                      header: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(_filterTextValue, style: TextStyle(fontSize: 16.0),),
+                      ),
+                      collapsed: dropdownFilter(),
+                    ),
+                  ),
+                )
+              ),
+            ),
             Expanded(
               child: patientListing(),
             )
@@ -429,7 +493,7 @@ class _PatientListPageState extends State<PatientListPage> implements PatientLis
                 children: [
                   Container(
                     padding: EdgeInsets.fromLTRB(0, 4.0, 0, 4.0),
-                    child: Text( S.of(context).LABEL_CASE_NUMER(item.caseNo.toString()), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),),
+                    child: Text( item.caseNo.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),),
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(0, 4.0, 0, 4.0),

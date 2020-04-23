@@ -207,7 +207,7 @@ class S {
   }
 
   String get DROPDOWN_ALL_REGIONS {
-    return Intl.message("All Regions", name: 'DROPDOWN_ALL_REGIONS');
+    return Intl.message("All Location", name: 'DROPDOWN_ALL_REGIONS');
   }
 
   String get DROPDOWN_ALL_STATUS {
@@ -239,7 +239,7 @@ class S {
   }
 
   String LABEL_REGION_VALUE(s) {
-    return Intl.message("Region: ${s}", name: 'LABEL_REGION_VALUE', args: [s]);
+    return Intl.message("Location: ${s}", name: 'LABEL_REGION_VALUE', args: [s]);
   }
 
   String get LABEL_TOTAL_PATIENTS {
@@ -248,6 +248,10 @@ class S {
 
   String get LABEL_SEARCH_KEYWORD {
     return Intl.message("Search Keyword", name: 'LABEL_SEARCH_KEYWORD');
+  }
+
+  String get LABEL_SEARCH_FILTERS {
+    return Intl.message("Filters: ", name: 'LABEL_SEARCH_FILTERS');
   }
 
 

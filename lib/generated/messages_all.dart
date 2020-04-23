@@ -58,7 +58,7 @@ class $en extends MessageLookupByLibrary {
 		"LABEL_BUTTON_NEW_CASES" : MessageLookupByLibrary.simpleMessage("New Cases"),
 		"LABEL_PH_PATIENT_LIST" : MessageLookupByLibrary.simpleMessage("PH Patient List"),
 		"LABEL_COUNTRY" : MessageLookupByLibrary.simpleMessage("Country"),
-		"DROPDOWN_ALL_REGIONS" : MessageLookupByLibrary.simpleMessage("All Regions"),
+		"DROPDOWN_ALL_REGIONS" : MessageLookupByLibrary.simpleMessage("All Location"),
 		"DROPDOWN_ALL_STATUS" : MessageLookupByLibrary.simpleMessage("All Status"),
 		"LABEL_CASE_NUMER" : (number) => "PH ${number}",
 		"LABEL_DATE_ADMITTED" : (date) => "Date Admitted: ${date}",
@@ -66,9 +66,10 @@ class $en extends MessageLookupByLibrary {
 		"LABEL_AGE" : (s) => "Age: ${s}",
 		"LABEL_NATIONALITY" : (s) => "Nationality: ${s}",
 		"LABEL_STATUS" : (s) => "Status: ${s}",
-		"LABEL_REGION_VALUE" : (s) => "Region: ${s}",
+		"LABEL_REGION_VALUE" : (s) => "Location: ${s}",
 		"LABEL_TOTAL_PATIENTS" : MessageLookupByLibrary.simpleMessage("Total: "),
 		"LABEL_SEARCH_KEYWORD" : MessageLookupByLibrary.simpleMessage("Search Keyword"),
+		"LABEL_SEARCH_FILTERS" : MessageLookupByLibrary.simpleMessage("Filters: "),
 
   };
 }
