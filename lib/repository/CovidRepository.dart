@@ -70,8 +70,7 @@ class CovidRepository implements AbstractCovidRepository {
     );
     if( NetworkUtils.isResponseSuccess(response) ){
       try {
-        var data = json.decode(response.body);
-        var history = data.reversed.toList();
+        var history = json.decode(response.body);
         List<String> dateList = [];
         List<CountryStats> returnData = [];
 
