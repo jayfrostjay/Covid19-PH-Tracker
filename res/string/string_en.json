@@ -53,7 +53,7 @@
     "LABEL_PH_PATIENT_LIST" : "PH Patient List",
     "LABEL_COUNTRY" : "Country",
 
-    "DROPDOWN_ALL_REGIONS" : "All Regions",
+    "DROPDOWN_ALL_REGIONS" : "All Location",
     "DROPDOWN_ALL_STATUS" : "All Status",
 
     "LABEL_CASE_NUMER" : "PH ${number}",
@@ -62,8 +62,9 @@
     "LABEL_AGE" : "Age: ${s}",
     "LABEL_NATIONALITY" : "Nationality: ${s}",
     "LABEL_STATUS" : "Status: ${s}",
-    "LABEL_REGION_VALUE" : "Region: ${s}",
+    "LABEL_REGION_VALUE" : "Location: ${s}",
     "LABEL_TOTAL_PATIENTS" : "Total: ",
 
-    "LABEL_SEARCH_KEYWORD" : "Search Keyword"
+    "LABEL_SEARCH_KEYWORD" : "Search Keyword",
+    "LABEL_SEARCH_FILTERS" : "Filters: "
 }

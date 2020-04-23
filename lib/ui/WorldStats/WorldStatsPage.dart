@@ -7,10 +7,8 @@ import 'package:phcovid19tracker/data/ListViewHolder.dart';
 import 'package:phcovid19tracker/generated/i18n.dart';
 import 'package:phcovid19tracker/ui/History/HistoryPage.dart';
 import 'package:phcovid19tracker/ui/WorldStats/WorldStatsPresenter.dart';
-import 'package:phcovid19tracker/utils/DateUtils.dart';
 import 'package:phcovid19tracker/utils/StringUtil.dart';
 import 'package:phcovid19tracker/widgets/CustomAppBar.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import 'WorldStatsPageContract.dart';
@@ -70,18 +68,18 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
   }
 
    @override
-  void onLoadStatsComplete(Map<String, dynamic> item) {
+  void onLoadStatsComplete(List<CountryStats> item) {
     List<ListViewHolder> holder = [];
     List<CountryStats> rawHolder = [];
     // order by total cases
-    (item["history"]).sort((a, b) => StringUtil.stringToInt(b['cases']).compareTo(StringUtil.stringToInt(a['cases'])));
-    (item["history"]).forEach((stat) => {
-      holder.add(ListViewHolder(viewType: ListViewHolderViewType.item, data: stat)), rawHolder.add(CountryStats.fromMap(stat))
+    (item).sort((a, b) => StringUtil.stringToInt(b.confirmed).compareTo(StringUtil.stringToInt(a.confirmed)));
+    (item).forEach((stat) => {
+      holder.add(ListViewHolder(viewType: ListViewHolderViewType.item, data: stat)), rawHolder.add(stat)
     });
 
     setStateWrapper((){
       _pageLoading = false;
-      if( item["history"].length == 0 ){
+      if( item.length == 0 ){
         _list = [];
       }else{
         _list = holder;
@@ -130,7 +128,7 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
     return Container();
   }
 
-  void _navigateToHistoryScreen(BuildContext context, String locationKey){
+  void navigateToHistoryScreen(BuildContext context, String locationKey){
     Navigator
       .of(context)
       .push(MaterialPageRoute(builder: (context) => 
@@ -331,4 +329,4 @@ class _WorldStatsPageState extends State<WorldStatsPage> implements BaseState, W
       body: (_pageLoading) ? pageLoader() : buildListView(context),
     ); 
   }
-}
+} 

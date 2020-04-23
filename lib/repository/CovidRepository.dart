@@ -13,16 +13,11 @@ import 'package:phcovid19tracker/utils/NetworkUtils.dart';
 class CovidRepository implements AbstractCovidRepository {
 
   var API_URL = FlutterConfig.get('API_BASE_URL');
-  var HEADER_API_KEY = FlutterConfig.get('API_KEY');
-  var HEADER_API_URL = FlutterConfig.get('API_URL'); 
 
-  var API_URL_PHBREAKDOWN = FlutterConfig.get('API_BASE_URL_PHBREAKDOWN');
-
-  static const LATEST_STATS = "latest_stat_by_country.php";
-  static const HISTORY_BY_COUNTRY = "cases_by_particular_country.php";
-  static const WORLD_STATS = "cases_by_country.php";
-
-  static const PH_PATIENTS_LIST = "cases";
+  static const LATEST_STATS = "country_latest_stats/";
+  static const HISTORY_BY_COUNTRY = "country_history/";
+  static const WORLD_STATS = "world_stats";
+  static const PH_PATIENTS_LIST = "ph_patient_list";
 
   static Future<http.Response> requestWrapper({String url, Map<String, String> headers}){
     return http.get(
@@ -34,18 +29,13 @@ class CovidRepository implements AbstractCovidRepository {
   @override
   Future<LatestCountryStats> fetchCountryLatestStats(String countryName) async {
     final response = await requestWrapper(
-      url: '$API_URL$LATEST_STATS?country=$countryName',
-      headers:  {
-        "Accept" : "application/json",
-        "x-rapidapi-host" : HEADER_API_URL, 
-        "x-rapidapi-key" : HEADER_API_KEY
-      }
+      url: '$API_URL$LATEST_STATS$countryName',
     );
     
     if( NetworkUtils.isResponseSuccess(response) ){
       try {
         var data = json.decode(response.body);
-        return new LatestCountryStats.fromMap(data["latest_stat_by_country"][0]);
+        return new LatestCountryStats.fromMap(data);
       }catch(e){
         throw new APIException("Error: [Function:fetchCountryLatestStats] [Error:$e]");
       }
@@ -55,23 +45,16 @@ class CovidRepository implements AbstractCovidRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> fetchWorldLatestStats() async {
+  Future<List<CountryStats>> fetchWorldLatestStats() async {
     final response = await requestWrapper(
       url: '$API_URL$WORLD_STATS',
-      headers:  {
-        "Accept" : "application/json",
-        "x-rapidapi-host" : HEADER_API_URL, 
-        "x-rapidapi-key" : HEADER_API_KEY
-      }
     );
 
     if( NetworkUtils.isResponseSuccess(response) ){
       try {
         var data = json.decode(response.body);
-        return {
-          "date" :  data["statistic_taken_at"],
-          "history" : data["countries_stat"]
-        };
+        List<CountryStats> list = [...data.map( (item) => CountryStats.fromMap(item) )];
+        return list;
       }catch(e){
         throw new APIException("Error: [Function:fetchWorldLatestStats] [Error:$e]");
       }
@@ -83,17 +66,11 @@ class CovidRepository implements AbstractCovidRepository {
   @override
   Future<List<CountryStats>> fetchCountryHistory(String countryName) async {
     final response = await requestWrapper(
-      url: '$API_URL$HISTORY_BY_COUNTRY?country=$countryName',
-      headers:  {
-        "Accept" : "application/json",
-        "x-rapidapi-host" : HEADER_API_URL, 
-        "x-rapidapi-key" : HEADER_API_KEY
-      }
+      url: '$API_URL$HISTORY_BY_COUNTRY$countryName',
     );
     if( NetworkUtils.isResponseSuccess(response) ){
       try {
-        var data = json.decode(response.body);
-        var history = data["stat_by_country"].reversed.toList();
+        var history = json.decode(response.body);
         List<String> dateList = [];
         List<CountryStats> returnData = [];
 
@@ -116,11 +93,10 @@ class CovidRepository implements AbstractCovidRepository {
   @override
   Future<List<PatientDetails>> fetchPatientsCases() async {
     final response = await requestWrapper(
-        url: '$API_URL_PHBREAKDOWN$PH_PATIENTS_LIST',
-        headers:  {
-        "Accept" : "application/json",
-        }
+        url: '$API_URL$PH_PATIENTS_LIST',
     );
+
+    print('$API_URL$PH_PATIENTS_LIST');
 
     if( NetworkUtils.isResponseSuccess(response) ){
       try{
